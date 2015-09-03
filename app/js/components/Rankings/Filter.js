@@ -1,5 +1,6 @@
 import React from 'react';
 import Actions from '../../actions/FestivalActions';
+import SelectFestival from './SelectFestival'
 
 class Filter extends React.Component{
 
@@ -8,9 +9,9 @@ class Filter extends React.Component{
       <div className="container">
         <div className="row">
           <h3>Choose Festival</h3>
-          <SelectFestival />
+          <SelectFestival festivals={this.props.festivals}/>
           <table>
-            <
+
           </table>
         </div>
         <div className="row">

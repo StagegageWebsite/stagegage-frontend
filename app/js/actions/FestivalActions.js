@@ -1,18 +1,28 @@
 import axios from 'axios';
-var Constants = require('../constants/constants');
-var Dispatcher = require('../dispatchers/dispatcher');
+import Constants from '../constants/FestivalActionConstants';
+import Dispatcher from '../dispatchers/dispatcher';
 
 export default {
 
   getFestivals() {
     // API call
     // return axios.get(`https://api.blah/${usernmae}/repos`); //string literals
-    let festivals = { data: [{ name: "Coachella", artists: ["Kanye West", "Modest Mouse"]},
-                            { name: "Bonaroo", artists: ["Chvrches", "Glass Animals"]} ]  };
+    let festivals = [
+    {
+        "festival_id": 1,
+        "created": "2015-08-29T15:55:29+0000",
+        "name": "Festival 1",
+        "artists": [
+            "1", //with full artist response body
+            "2",
+            "3"
+        ]
+    }
+]
     Dispatcher.dispatch({
-      actionType: Constants.FESTIVAL_LOADED,
+      actionType: Constants.FESTIVALS_LOADED,
       data: festivals
-    });
-  };
+    })
+  }
 
 }

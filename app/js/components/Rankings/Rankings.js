@@ -9,10 +9,11 @@ export default class Rankings extends React.Component{
     super(props);
     this.state = {
       festivals: FestivalStore.getFestivals()
-    }
-
+    };
+    Actions.getFestivals();
     this._onChange = this._onChange.bind(this);
-  }
+
+;  }
 
   componentDidMount() {
     FestivalStore.addChangeListener(this._onChange);
@@ -23,12 +24,18 @@ export default class Rankings extends React.Component{
     FestivalStore.removeChangeListener(this._onChange);
   }
 
+  _onChange() {
+    this.setState({
+      festivals: FestivalStore.getFestivals()
+    });
+  }
+
   render() {
     return (
       <div className="row">
       <h1>Full Rankings</h1>
         <div className="col-md-4">
-          <Filter />
+          <Filter festivals={this.state.festivals}/>
         </div>
         <div className="col-md-8">
           <h1>Genres</h1>
@@ -37,13 +44,7 @@ export default class Rankings extends React.Component{
     )
   }
 
-  _onChange() {
-    this.setState({
-      festivals: FestivalStore.getfestivals();
-    });
-  }
-
-};
+}
 
 Rankings.contextTypes = {
   router: React.PropTypes.func.isRequired
