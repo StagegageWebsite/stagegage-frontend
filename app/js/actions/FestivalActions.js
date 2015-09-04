@@ -11,7 +11,17 @@ export default {
     {
         "festival_id": 1,
         "created": "2015-08-29T15:55:29+0000",
-        "name": "Festival 1",
+        "name": "Coachella",
+        "artists": [
+            "1", //with full artist response body
+            "2",
+            "3"
+        ]
+    },
+    {
+        "festival_id": 1,
+        "created": "2015-08-29T15:55:29+0000",
+        "name": "Bonaroo",
         "artists": [
             "1", //with full artist response body
             "2",

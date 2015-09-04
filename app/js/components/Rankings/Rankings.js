@@ -10,7 +10,7 @@ export default class Rankings extends React.Component{
     this.state = {
       festivals: FestivalStore.getFestivals()
     };
-    Actions.getFestivals();
+
     this._onChange = this._onChange.bind(this);
 
 ;  }
@@ -30,12 +30,16 @@ export default class Rankings extends React.Component{
     });
   }
 
+  _onOptionSelected() {
+    return null;
+  }
+
   render() {
     return (
       <div className="row">
       <h1>Full Rankings</h1>
         <div className="col-md-4">
-          <Filter festivals={this.state.festivals}/>
+          <Filter festivals={this.state.festivals} onOptionSelecter={this._onOptionSelected.bind(this)}/>
         </div>
         <div className="col-md-8">
           <h1>Genres</h1>
