@@ -1,6 +1,6 @@
 import Dispatcher from '../dispatchers/dispatcher';
 import Store from './CoreStore';
-import Constants from '../constants/FestivalActionConstants.js'
+import Constants from '../constants/FestivalActionConstants.js';
 
 var _festivals = [];
 
@@ -29,13 +29,13 @@ class FestivalStore extends Store {
 
 var festivalStore = new FestivalStore()
 
-  Dispatcher.register(function(action) {
-    switch (action.actionType) {
-      case Constants.FESTIVALS_LOADED:
-        loadFestivals(action.data);
-        festivalStore.emitChange();
-        break;
-    }
-  })
+Dispatcher.register(function(action) {
+  switch (action.actionType) {
+    case Constants.FESTIVALS_LOADED:
+      loadFestivals(action.data);
+      festivalStore.emitChange();
+      break;
+  }
+})
 
 export default festivalStore;

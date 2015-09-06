@@ -1,23 +1,29 @@
 import React from 'react';
 import Filter from './Filter';
-import FestivalStore from '../../stores/FestivalStore'
-import Actions from '../../actions/FestivalActions'
+import FestivalStore from '../../stores/FestivalStore';
+import ArtistStore from '../../stores/ArtistStore';
+import FestivalActions from '../../actions/FestivalActions';
+import ArtistActions from '../../actions/ArtistActions';
+import ArtistApiCalls from '../../actions/ArtistApiCalls';
+import RankingsTable from './RankingsTable';
 
 export default class Rankings extends React.Component{
 
   constructor(props) {
     super(props);
     this.state = {
-      festivals: FestivalStore.getFestivals()
+      festivals: FestivalStore.getFestivals(),
+      festivalArtists: ArtistApiCalls.getFestivalArtists('Bonaroo')
     };
 
     this._onChange = this._onChange.bind(this);
 
-;  }
+   }
 
   componentDidMount() {
     FestivalStore.addChangeListener(this._onChange);
-    Actions.getFestivals();
+    FestivalActions.getFestivals();
+
   }
 
   componentWillUnmount() {
@@ -30,19 +36,23 @@ export default class Rankings extends React.Component{
     });
   }
 
-  _onOptionSelected() {
-    return null;
+  _onOptionSelected(selected, e) {
+    let artists = ArtistApiCalls.getFestivalArtists(selected.name);
+
+    let nextState =
+    this.setState({festivalArtists: artists});
   }
 
   render() {
     return (
       <div className="row">
-      <h1>Full Rankings</h1>
         <div className="col-md-4">
-          <Filter festivals={this.state.festivals} onOptionSelecter={this._onOptionSelected.bind(this)}/>
+        <h1>Full Rankings</h1>
+          <Filter festivals={this.state.festivals} onOptionSelected={this._onOptionSelected.bind(this)}/>
         </div>
         <div className="col-md-8">
-          <h1>Genres</h1>
+        <h1>Results</h1>
+          <RankingsTable festivalArtists={this.state.festivalArtists}/>
         </div>
       </div>
     )

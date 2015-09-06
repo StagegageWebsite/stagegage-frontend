@@ -26392,13 +26392,29 @@
 
 	var _Filter2 = _interopRequireDefault(_Filter);
 
-	var _storesFestivalStore = __webpack_require__(235);
+	var _storesFestivalStore = __webpack_require__(245);
 
 	var _storesFestivalStore2 = _interopRequireDefault(_storesFestivalStore);
+
+	var _storesArtistStore = __webpack_require__(252);
+
+	var _storesArtistStore2 = _interopRequireDefault(_storesArtistStore);
 
 	var _actionsFestivalActions = __webpack_require__(228);
 
 	var _actionsFestivalActions2 = _interopRequireDefault(_actionsFestivalActions);
+
+	var _actionsArtistActions = __webpack_require__(248);
+
+	var _actionsArtistActions2 = _interopRequireDefault(_actionsArtistActions);
+
+	var _actionsArtistApiCalls = __webpack_require__(253);
+
+	var _actionsArtistApiCalls2 = _interopRequireDefault(_actionsArtistApiCalls);
+
+	var _RankingsTable = __webpack_require__(249);
+
+	var _RankingsTable2 = _interopRequireDefault(_RankingsTable);
 
 	var Rankings = (function (_React$Component) {
 	  _inherits(Rankings, _React$Component);
@@ -26408,12 +26424,11 @@
 
 	    _get(Object.getPrototypeOf(Rankings.prototype), 'constructor', this).call(this, props);
 	    this.state = {
-	      festivals: _storesFestivalStore2['default'].getFestivals()
+	      festivals: _storesFestivalStore2['default'].getFestivals(),
+	      festivalArtists: _actionsArtistApiCalls2['default'].getFestivalArtists('Bonaroo')
 	    };
 
 	    this._onChange = this._onChange.bind(this);
-
-	    ;
 	  }
 
 	  _createClass(Rankings, [{
@@ -26436,8 +26451,10 @@
 	    }
 	  }, {
 	    key: '_onOptionSelected',
-	    value: function _onOptionSelected() {
-	      return null;
+	    value: function _onOptionSelected(selected, e) {
+	      var artists = _actionsArtistApiCalls2['default'].getFestivalArtists(selected.name);
+
+	      var nextState = this.setState({ festivalArtists: artists });
 	    }
 	  }, {
 	    key: 'render',
@@ -26446,14 +26463,14 @@
 	        'div',
 	        { className: 'row' },
 	        _react2['default'].createElement(
-	          'h1',
-	          null,
-	          'Full Rankings'
-	        ),
-	        _react2['default'].createElement(
 	          'div',
 	          { className: 'col-md-4' },
-	          _react2['default'].createElement(_Filter2['default'], { festivals: this.state.festivals, onOptionSelecter: this._onOptionSelected.bind(this) })
+	          _react2['default'].createElement(
+	            'h1',
+	            null,
+	            'Full Rankings'
+	          ),
+	          _react2['default'].createElement(_Filter2['default'], { festivals: this.state.festivals, onOptionSelected: this._onOptionSelected.bind(this) })
 	        ),
 	        _react2['default'].createElement(
 	          'div',
@@ -26461,8 +26478,9 @@
 	          _react2['default'].createElement(
 	            'h1',
 	            null,
-	            'Genres'
-	          )
+	            'Results'
+	          ),
+	          _react2['default'].createElement(_RankingsTable2['default'], { festivalArtists: this.state.festivalArtists })
 	        )
 	      );
 	    }
@@ -26533,7 +26551,7 @@
 	            null,
 	            'Choose Festival'
 	          ),
-	          _react2['default'].createElement(_SelectFestival2['default'], { festivals: this.props.festivals }),
+	          _react2['default'].createElement(_SelectFestival2['default'], { festivals: this.props.festivals, onOptionSelected: this.props.onOptionSelected }),
 	          _react2['default'].createElement('table', null)
 	        ),
 	        _react2['default'].createElement(
@@ -26599,6 +26617,7 @@
 	            "artists": ["1", //with full artist response body
 	            "2", "3"]
 	        }];
+
 	        _dispatchersDispatcher2['default'].dispatch({
 	            actionType: _constantsFestivalActionConstants2['default'].FESTIVALS_LOADED,
 	            data: festivals
@@ -26618,7 +26637,8 @@
 	  value: true
 	});
 	exports['default'] = {
-	  FESTIVALS_LOADED: 'FESTIVALS_LOADED'
+	  FESTIVALS_LOADED: 'FESTIVALS_LOADED',
+	  FESTIVALARTISTS_LOADED: 'FESTIVALARTISTS_LOADED'
 	};
 	module.exports = exports['default'];
 
@@ -26973,7 +26993,7 @@
 
 	var _actionsFestivalActions2 = _interopRequireDefault(_actionsFestivalActions);
 
-	var _TypeaheadsFestivalTypeahead = __webpack_require__(238);
+	var _TypeaheadsFestivalTypeahead = __webpack_require__(235);
 
 	var _TypeaheadsFestivalTypeahead2 = _interopRequireDefault(_TypeaheadsFestivalTypeahead);
 
@@ -27050,455 +27070,11 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _dispatchersDispatcher = __webpack_require__(230);
-
-	var _dispatchersDispatcher2 = _interopRequireDefault(_dispatchersDispatcher);
-
-	var _CoreStore = __webpack_require__(236);
-
-	var _CoreStore2 = _interopRequireDefault(_CoreStore);
-
-	var _constantsFestivalActionConstantsJs = __webpack_require__(229);
-
-	var _constantsFestivalActionConstantsJs2 = _interopRequireDefault(_constantsFestivalActionConstantsJs);
-
-	var _festivals = [];
-
-	function Festival(festival) {
-	  //reformat the festival object to match what you want
-	  this.id = festival.festival_id;
-	  this.name = festival.name;
-	  this.artists = festival.artists;
-	}
-
-	function loadFestivals(festivals) {
-	  festivals.forEach(createFestival);
-	}
-
-	function createFestival(festival, index, array) {
-	  var newFestival = new Festival(festival);
-	  _festivals.push(newFestival);
-	}
-
-	var FestivalStore = (function (_Store) {
-	  _inherits(FestivalStore, _Store);
-
-	  function FestivalStore() {
-	    _classCallCheck(this, FestivalStore);
-
-	    _get(Object.getPrototypeOf(FestivalStore.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(FestivalStore, [{
-	    key: 'getFestivals',
-	    value: function getFestivals() {
-	      return _festivals;
-	    }
-	  }]);
-
-	  return FestivalStore;
-	})(_CoreStore2['default']);
-
-	var festivalStore = new FestivalStore();
-
-	_dispatchersDispatcher2['default'].register(function (action) {
-	  switch (action.actionType) {
-	    case _constantsFestivalActionConstantsJs2['default'].FESTIVALS_LOADED:
-	      loadFestivals(action.data);
-	      festivalStore.emitChange();
-	      break;
-	  }
-	});
-
-	exports['default'] = festivalStore;
-	module.exports = exports['default'];
-
-/***/ },
-/* 236 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _events = __webpack_require__(237);
-
-	var CHANGE_EVENT = 'change';
-
-	var Store = (function (_EventEmitter) {
-	  _inherits(Store, _EventEmitter);
-
-	  function Store() {
-	    _classCallCheck(this, Store);
-
-	    _get(Object.getPrototypeOf(Store.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(Store, [{
-	    key: 'emitChange',
-	    value: function emitChange() {
-	      this.emit(CHANGE_EVENT);
-	    }
-	  }, {
-	    key: 'addChangeListener',
-	    value: function addChangeListener(callback) {
-	      this.on(CHANGE_EVENT, callback);
-	    }
-	  }, {
-	    key: 'removeChangeListener',
-	    value: function removeChangeListener(callback) {
-	      this.removeListener(CHANGE_EVENT, callback);
-	    }
-	  }]);
-
-	  return Store;
-	})(_events.EventEmitter);
-
-	exports['default'] = Store;
-	module.exports = exports['default'];
-
-/***/ },
-/* 237 */
-/***/ function(module, exports) {
-
-	// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-	function EventEmitter() {
-	  this._events = this._events || {};
-	  this._maxListeners = this._maxListeners || undefined;
-	}
-	module.exports = EventEmitter;
-
-	// Backwards-compat with node 0.10.x
-	EventEmitter.EventEmitter = EventEmitter;
-
-	EventEmitter.prototype._events = undefined;
-	EventEmitter.prototype._maxListeners = undefined;
-
-	// By default EventEmitters will print a warning if more than 10 listeners are
-	// added to it. This is a useful default which helps finding memory leaks.
-	EventEmitter.defaultMaxListeners = 10;
-
-	// Obviously not all Emitters should be limited to 10. This function allows
-	// that to be increased. Set to zero for unlimited.
-	EventEmitter.prototype.setMaxListeners = function(n) {
-	  if (!isNumber(n) || n < 0 || isNaN(n))
-	    throw TypeError('n must be a positive number');
-	  this._maxListeners = n;
-	  return this;
-	};
-
-	EventEmitter.prototype.emit = function(type) {
-	  var er, handler, len, args, i, listeners;
-
-	  if (!this._events)
-	    this._events = {};
-
-	  // If there is no 'error' event listener then throw.
-	  if (type === 'error') {
-	    if (!this._events.error ||
-	        (isObject(this._events.error) && !this._events.error.length)) {
-	      er = arguments[1];
-	      if (er instanceof Error) {
-	        throw er; // Unhandled 'error' event
-	      }
-	      throw TypeError('Uncaught, unspecified "error" event.');
-	    }
-	  }
-
-	  handler = this._events[type];
-
-	  if (isUndefined(handler))
-	    return false;
-
-	  if (isFunction(handler)) {
-	    switch (arguments.length) {
-	      // fast cases
-	      case 1:
-	        handler.call(this);
-	        break;
-	      case 2:
-	        handler.call(this, arguments[1]);
-	        break;
-	      case 3:
-	        handler.call(this, arguments[1], arguments[2]);
-	        break;
-	      // slower
-	      default:
-	        len = arguments.length;
-	        args = new Array(len - 1);
-	        for (i = 1; i < len; i++)
-	          args[i - 1] = arguments[i];
-	        handler.apply(this, args);
-	    }
-	  } else if (isObject(handler)) {
-	    len = arguments.length;
-	    args = new Array(len - 1);
-	    for (i = 1; i < len; i++)
-	      args[i - 1] = arguments[i];
-
-	    listeners = handler.slice();
-	    len = listeners.length;
-	    for (i = 0; i < len; i++)
-	      listeners[i].apply(this, args);
-	  }
-
-	  return true;
-	};
-
-	EventEmitter.prototype.addListener = function(type, listener) {
-	  var m;
-
-	  if (!isFunction(listener))
-	    throw TypeError('listener must be a function');
-
-	  if (!this._events)
-	    this._events = {};
-
-	  // To avoid recursion in the case that type === "newListener"! Before
-	  // adding it to the listeners, first emit "newListener".
-	  if (this._events.newListener)
-	    this.emit('newListener', type,
-	              isFunction(listener.listener) ?
-	              listener.listener : listener);
-
-	  if (!this._events[type])
-	    // Optimize the case of one listener. Don't need the extra array object.
-	    this._events[type] = listener;
-	  else if (isObject(this._events[type]))
-	    // If we've already got an array, just append.
-	    this._events[type].push(listener);
-	  else
-	    // Adding the second element, need to change to array.
-	    this._events[type] = [this._events[type], listener];
-
-	  // Check for listener leak
-	  if (isObject(this._events[type]) && !this._events[type].warned) {
-	    var m;
-	    if (!isUndefined(this._maxListeners)) {
-	      m = this._maxListeners;
-	    } else {
-	      m = EventEmitter.defaultMaxListeners;
-	    }
-
-	    if (m && m > 0 && this._events[type].length > m) {
-	      this._events[type].warned = true;
-	      console.error('(node) warning: possible EventEmitter memory ' +
-	                    'leak detected. %d listeners added. ' +
-	                    'Use emitter.setMaxListeners() to increase limit.',
-	                    this._events[type].length);
-	      if (typeof console.trace === 'function') {
-	        // not supported in IE 10
-	        console.trace();
-	      }
-	    }
-	  }
-
-	  return this;
-	};
-
-	EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-	EventEmitter.prototype.once = function(type, listener) {
-	  if (!isFunction(listener))
-	    throw TypeError('listener must be a function');
-
-	  var fired = false;
-
-	  function g() {
-	    this.removeListener(type, g);
-
-	    if (!fired) {
-	      fired = true;
-	      listener.apply(this, arguments);
-	    }
-	  }
-
-	  g.listener = listener;
-	  this.on(type, g);
-
-	  return this;
-	};
-
-	// emits a 'removeListener' event iff the listener was removed
-	EventEmitter.prototype.removeListener = function(type, listener) {
-	  var list, position, length, i;
-
-	  if (!isFunction(listener))
-	    throw TypeError('listener must be a function');
-
-	  if (!this._events || !this._events[type])
-	    return this;
-
-	  list = this._events[type];
-	  length = list.length;
-	  position = -1;
-
-	  if (list === listener ||
-	      (isFunction(list.listener) && list.listener === listener)) {
-	    delete this._events[type];
-	    if (this._events.removeListener)
-	      this.emit('removeListener', type, listener);
-
-	  } else if (isObject(list)) {
-	    for (i = length; i-- > 0;) {
-	      if (list[i] === listener ||
-	          (list[i].listener && list[i].listener === listener)) {
-	        position = i;
-	        break;
-	      }
-	    }
-
-	    if (position < 0)
-	      return this;
-
-	    if (list.length === 1) {
-	      list.length = 0;
-	      delete this._events[type];
-	    } else {
-	      list.splice(position, 1);
-	    }
-
-	    if (this._events.removeListener)
-	      this.emit('removeListener', type, listener);
-	  }
-
-	  return this;
-	};
-
-	EventEmitter.prototype.removeAllListeners = function(type) {
-	  var key, listeners;
-
-	  if (!this._events)
-	    return this;
-
-	  // not listening for removeListener, no need to emit
-	  if (!this._events.removeListener) {
-	    if (arguments.length === 0)
-	      this._events = {};
-	    else if (this._events[type])
-	      delete this._events[type];
-	    return this;
-	  }
-
-	  // emit removeListener for all listeners on all events
-	  if (arguments.length === 0) {
-	    for (key in this._events) {
-	      if (key === 'removeListener') continue;
-	      this.removeAllListeners(key);
-	    }
-	    this.removeAllListeners('removeListener');
-	    this._events = {};
-	    return this;
-	  }
-
-	  listeners = this._events[type];
-
-	  if (isFunction(listeners)) {
-	    this.removeListener(type, listeners);
-	  } else {
-	    // LIFO order
-	    while (listeners.length)
-	      this.removeListener(type, listeners[listeners.length - 1]);
-	  }
-	  delete this._events[type];
-
-	  return this;
-	};
-
-	EventEmitter.prototype.listeners = function(type) {
-	  var ret;
-	  if (!this._events || !this._events[type])
-	    ret = [];
-	  else if (isFunction(this._events[type]))
-	    ret = [this._events[type]];
-	  else
-	    ret = this._events[type].slice();
-	  return ret;
-	};
-
-	EventEmitter.listenerCount = function(emitter, type) {
-	  var ret;
-	  if (!emitter._events || !emitter._events[type])
-	    ret = 0;
-	  else if (isFunction(emitter._events[type]))
-	    ret = 1;
-	  else
-	    ret = emitter._events[type].length;
-	  return ret;
-	};
-
-	function isFunction(arg) {
-	  return typeof arg === 'function';
-	}
-
-	function isNumber(arg) {
-	  return typeof arg === 'number';
-	}
-
-	function isObject(arg) {
-	  return typeof arg === 'object' && arg !== null;
-	}
-
-	function isUndefined(arg) {
-	  return arg === void 0;
-	}
-
-
-/***/ },
-/* 238 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactTypeahead = __webpack_require__(239);
+	var _reactTypeahead = __webpack_require__(236);
 
 	var FestivalTypeahead = (function (_React$Component) {
 	  _inherits(FestivalTypeahead, _React$Component);
@@ -27544,11 +27120,11 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 239 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Typeahead = __webpack_require__(240);
-	var Tokenizer = __webpack_require__(246);
+	var Typeahead = __webpack_require__(237);
+	var Tokenizer = __webpack_require__(243);
 
 	module.exports = {
 	  Typeahead: Typeahead,
@@ -27557,7 +27133,7 @@
 
 
 /***/ },
-/* 240 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27565,10 +27141,10 @@
 	 */
 
 	var React = __webpack_require__(1);
-	var TypeaheadSelector = __webpack_require__(241);
-	var KeyEvent = __webpack_require__(244);
-	var fuzzy = __webpack_require__(245);
-	var classNames = __webpack_require__(243);
+	var TypeaheadSelector = __webpack_require__(238);
+	var KeyEvent = __webpack_require__(241);
+	var fuzzy = __webpack_require__(242);
+	var classNames = __webpack_require__(240);
 
 	var IDENTITY_FN = function(input) { return input; };
 	var SHOULD_SEARCH_VALUE = function(input) { return input && input.trim().length > 0; };
@@ -27938,7 +27514,7 @@
 
 
 /***/ },
-/* 241 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27946,8 +27522,8 @@
 	 */
 
 	var React = __webpack_require__(1);
-	var TypeaheadOption = __webpack_require__(242);
-	var classNames = __webpack_require__(243);
+	var TypeaheadOption = __webpack_require__(239);
+	var classNames = __webpack_require__(240);
 
 	/**
 	 * Container for the options rendered as part of the autocompletion process
@@ -28029,7 +27605,7 @@
 
 
 /***/ },
-/* 242 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28037,7 +27613,7 @@
 	 */
 
 	var React = __webpack_require__(1);
-	var classNames = __webpack_require__(243);
+	var classNames = __webpack_require__(240);
 
 	/**
 	 * A single option within the TypeaheadSelector
@@ -28100,7 +27676,7 @@
 
 
 /***/ },
-/* 243 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -28149,7 +27725,7 @@
 
 
 /***/ },
-/* 244 */
+/* 241 */
 /***/ function(module, exports) {
 
 	/**
@@ -28168,7 +27744,7 @@
 
 
 /***/ },
-/* 245 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -28310,7 +27886,7 @@
 
 
 /***/ },
-/* 246 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28318,10 +27894,10 @@
 	 */
 
 	var React = __webpack_require__(1);
-	var Token = __webpack_require__(247);
-	var KeyEvent = __webpack_require__(244);
-	var Typeahead = __webpack_require__(240);
-	var classNames = __webpack_require__(243);
+	var Token = __webpack_require__(244);
+	var KeyEvent = __webpack_require__(241);
+	var Typeahead = __webpack_require__(237);
+	var classNames = __webpack_require__(240);
 
 	function _arraysAreDifferent(array1, array2) {
 	  if (array1.length != array2.length){
@@ -28520,7 +28096,7 @@
 
 
 /***/ },
-/* 247 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28528,7 +28104,7 @@
 	 */
 
 	var React = __webpack_require__(1);
-	var classNames = __webpack_require__(243);
+	var classNames = __webpack_require__(240);
 
 	/**
 	 * Encapsulates the rendering of an option that has been "selected" in a
@@ -28591,6 +28167,1705 @@
 
 	module.exports = Token;
 
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _dispatchersDispatcher = __webpack_require__(230);
+
+	var _dispatchersDispatcher2 = _interopRequireDefault(_dispatchersDispatcher);
+
+	var _CoreStore = __webpack_require__(246);
+
+	var _CoreStore2 = _interopRequireDefault(_CoreStore);
+
+	var _constantsFestivalActionConstantsJs = __webpack_require__(229);
+
+	var _constantsFestivalActionConstantsJs2 = _interopRequireDefault(_constantsFestivalActionConstantsJs);
+
+	var _festivals = [];
+
+	function Festival(festival) {
+	  //reformat the festival object to match what you want
+	  this.id = festival.festival_id;
+	  this.name = festival.name;
+	  this.artists = festival.artists;
+	}
+
+	function loadFestivals(festivals) {
+	  festivals.forEach(createFestival);
+	}
+
+	function createFestival(festival, index, array) {
+	  var newFestival = new Festival(festival);
+	  _festivals.push(newFestival);
+	}
+
+	var FestivalStore = (function (_Store) {
+	  _inherits(FestivalStore, _Store);
+
+	  function FestivalStore() {
+	    _classCallCheck(this, FestivalStore);
+
+	    _get(Object.getPrototypeOf(FestivalStore.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(FestivalStore, [{
+	    key: 'getFestivals',
+	    value: function getFestivals() {
+	      return _festivals;
+	    }
+	  }]);
+
+	  return FestivalStore;
+	})(_CoreStore2['default']);
+
+	var festivalStore = new FestivalStore();
+
+	_dispatchersDispatcher2['default'].register(function (action) {
+	  switch (action.actionType) {
+	    case _constantsFestivalActionConstantsJs2['default'].FESTIVALS_LOADED:
+	      loadFestivals(action.data);
+	      festivalStore.emitChange();
+	      break;
+	  }
+	});
+
+	exports['default'] = festivalStore;
+	module.exports = exports['default'];
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _events = __webpack_require__(247);
+
+	var CHANGE_EVENT = 'change';
+
+	var Store = (function (_EventEmitter) {
+	  _inherits(Store, _EventEmitter);
+
+	  function Store() {
+	    _classCallCheck(this, Store);
+
+	    _get(Object.getPrototypeOf(Store.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(Store, [{
+	    key: 'emitChange',
+	    value: function emitChange() {
+	      this.emit(CHANGE_EVENT);
+	    }
+	  }, {
+	    key: 'addChangeListener',
+	    value: function addChangeListener(callback) {
+	      this.on(CHANGE_EVENT, callback);
+	    }
+	  }, {
+	    key: 'removeChangeListener',
+	    value: function removeChangeListener(callback) {
+	      this.removeListener(CHANGE_EVENT, callback);
+	    }
+	  }]);
+
+	  return Store;
+	})(_events.EventEmitter);
+
+	exports['default'] = Store;
+	module.exports = exports['default'];
+
+/***/ },
+/* 247 */
+/***/ function(module, exports) {
+
+	// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	function EventEmitter() {
+	  this._events = this._events || {};
+	  this._maxListeners = this._maxListeners || undefined;
+	}
+	module.exports = EventEmitter;
+
+	// Backwards-compat with node 0.10.x
+	EventEmitter.EventEmitter = EventEmitter;
+
+	EventEmitter.prototype._events = undefined;
+	EventEmitter.prototype._maxListeners = undefined;
+
+	// By default EventEmitters will print a warning if more than 10 listeners are
+	// added to it. This is a useful default which helps finding memory leaks.
+	EventEmitter.defaultMaxListeners = 10;
+
+	// Obviously not all Emitters should be limited to 10. This function allows
+	// that to be increased. Set to zero for unlimited.
+	EventEmitter.prototype.setMaxListeners = function(n) {
+	  if (!isNumber(n) || n < 0 || isNaN(n))
+	    throw TypeError('n must be a positive number');
+	  this._maxListeners = n;
+	  return this;
+	};
+
+	EventEmitter.prototype.emit = function(type) {
+	  var er, handler, len, args, i, listeners;
+
+	  if (!this._events)
+	    this._events = {};
+
+	  // If there is no 'error' event listener then throw.
+	  if (type === 'error') {
+	    if (!this._events.error ||
+	        (isObject(this._events.error) && !this._events.error.length)) {
+	      er = arguments[1];
+	      if (er instanceof Error) {
+	        throw er; // Unhandled 'error' event
+	      }
+	      throw TypeError('Uncaught, unspecified "error" event.');
+	    }
+	  }
+
+	  handler = this._events[type];
+
+	  if (isUndefined(handler))
+	    return false;
+
+	  if (isFunction(handler)) {
+	    switch (arguments.length) {
+	      // fast cases
+	      case 1:
+	        handler.call(this);
+	        break;
+	      case 2:
+	        handler.call(this, arguments[1]);
+	        break;
+	      case 3:
+	        handler.call(this, arguments[1], arguments[2]);
+	        break;
+	      // slower
+	      default:
+	        len = arguments.length;
+	        args = new Array(len - 1);
+	        for (i = 1; i < len; i++)
+	          args[i - 1] = arguments[i];
+	        handler.apply(this, args);
+	    }
+	  } else if (isObject(handler)) {
+	    len = arguments.length;
+	    args = new Array(len - 1);
+	    for (i = 1; i < len; i++)
+	      args[i - 1] = arguments[i];
+
+	    listeners = handler.slice();
+	    len = listeners.length;
+	    for (i = 0; i < len; i++)
+	      listeners[i].apply(this, args);
+	  }
+
+	  return true;
+	};
+
+	EventEmitter.prototype.addListener = function(type, listener) {
+	  var m;
+
+	  if (!isFunction(listener))
+	    throw TypeError('listener must be a function');
+
+	  if (!this._events)
+	    this._events = {};
+
+	  // To avoid recursion in the case that type === "newListener"! Before
+	  // adding it to the listeners, first emit "newListener".
+	  if (this._events.newListener)
+	    this.emit('newListener', type,
+	              isFunction(listener.listener) ?
+	              listener.listener : listener);
+
+	  if (!this._events[type])
+	    // Optimize the case of one listener. Don't need the extra array object.
+	    this._events[type] = listener;
+	  else if (isObject(this._events[type]))
+	    // If we've already got an array, just append.
+	    this._events[type].push(listener);
+	  else
+	    // Adding the second element, need to change to array.
+	    this._events[type] = [this._events[type], listener];
+
+	  // Check for listener leak
+	  if (isObject(this._events[type]) && !this._events[type].warned) {
+	    var m;
+	    if (!isUndefined(this._maxListeners)) {
+	      m = this._maxListeners;
+	    } else {
+	      m = EventEmitter.defaultMaxListeners;
+	    }
+
+	    if (m && m > 0 && this._events[type].length > m) {
+	      this._events[type].warned = true;
+	      console.error('(node) warning: possible EventEmitter memory ' +
+	                    'leak detected. %d listeners added. ' +
+	                    'Use emitter.setMaxListeners() to increase limit.',
+	                    this._events[type].length);
+	      if (typeof console.trace === 'function') {
+	        // not supported in IE 10
+	        console.trace();
+	      }
+	    }
+	  }
+
+	  return this;
+	};
+
+	EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+	EventEmitter.prototype.once = function(type, listener) {
+	  if (!isFunction(listener))
+	    throw TypeError('listener must be a function');
+
+	  var fired = false;
+
+	  function g() {
+	    this.removeListener(type, g);
+
+	    if (!fired) {
+	      fired = true;
+	      listener.apply(this, arguments);
+	    }
+	  }
+
+	  g.listener = listener;
+	  this.on(type, g);
+
+	  return this;
+	};
+
+	// emits a 'removeListener' event iff the listener was removed
+	EventEmitter.prototype.removeListener = function(type, listener) {
+	  var list, position, length, i;
+
+	  if (!isFunction(listener))
+	    throw TypeError('listener must be a function');
+
+	  if (!this._events || !this._events[type])
+	    return this;
+
+	  list = this._events[type];
+	  length = list.length;
+	  position = -1;
+
+	  if (list === listener ||
+	      (isFunction(list.listener) && list.listener === listener)) {
+	    delete this._events[type];
+	    if (this._events.removeListener)
+	      this.emit('removeListener', type, listener);
+
+	  } else if (isObject(list)) {
+	    for (i = length; i-- > 0;) {
+	      if (list[i] === listener ||
+	          (list[i].listener && list[i].listener === listener)) {
+	        position = i;
+	        break;
+	      }
+	    }
+
+	    if (position < 0)
+	      return this;
+
+	    if (list.length === 1) {
+	      list.length = 0;
+	      delete this._events[type];
+	    } else {
+	      list.splice(position, 1);
+	    }
+
+	    if (this._events.removeListener)
+	      this.emit('removeListener', type, listener);
+	  }
+
+	  return this;
+	};
+
+	EventEmitter.prototype.removeAllListeners = function(type) {
+	  var key, listeners;
+
+	  if (!this._events)
+	    return this;
+
+	  // not listening for removeListener, no need to emit
+	  if (!this._events.removeListener) {
+	    if (arguments.length === 0)
+	      this._events = {};
+	    else if (this._events[type])
+	      delete this._events[type];
+	    return this;
+	  }
+
+	  // emit removeListener for all listeners on all events
+	  if (arguments.length === 0) {
+	    for (key in this._events) {
+	      if (key === 'removeListener') continue;
+	      this.removeAllListeners(key);
+	    }
+	    this.removeAllListeners('removeListener');
+	    this._events = {};
+	    return this;
+	  }
+
+	  listeners = this._events[type];
+
+	  if (isFunction(listeners)) {
+	    this.removeListener(type, listeners);
+	  } else {
+	    // LIFO order
+	    while (listeners.length)
+	      this.removeListener(type, listeners[listeners.length - 1]);
+	  }
+	  delete this._events[type];
+
+	  return this;
+	};
+
+	EventEmitter.prototype.listeners = function(type) {
+	  var ret;
+	  if (!this._events || !this._events[type])
+	    ret = [];
+	  else if (isFunction(this._events[type]))
+	    ret = [this._events[type]];
+	  else
+	    ret = this._events[type].slice();
+	  return ret;
+	};
+
+	EventEmitter.listenerCount = function(emitter, type) {
+	  var ret;
+	  if (!emitter._events || !emitter._events[type])
+	    ret = 0;
+	  else if (isFunction(emitter._events[type]))
+	    ret = 1;
+	  else
+	    ret = emitter._events[type].length;
+	  return ret;
+	};
+
+	function isFunction(arg) {
+	  return typeof arg === 'function';
+	}
+
+	function isNumber(arg) {
+	  return typeof arg === 'number';
+	}
+
+	function isObject(arg) {
+	  return typeof arg === 'object' && arg !== null;
+	}
+
+	function isUndefined(arg) {
+	  return arg === void 0;
+	}
+
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _axios = __webpack_require__(207);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	var _constantsArtistActionConstants = __webpack_require__(251);
+
+	var _constantsArtistActionConstants2 = _interopRequireDefault(_constantsArtistActionConstants);
+
+	var _dispatchersDispatcher = __webpack_require__(230);
+
+	var _dispatchersDispatcher2 = _interopRequireDefault(_dispatchersDispatcher);
+
+	exports['default'] = {
+
+	  //FLUXED
+	  getArtists: function getArtists() {
+	    //api call
+	    var artists = [{
+	      "id": 1,
+	      "created": "2015-08-29T15:55:06+0000",
+	      "name": "Artist 1"
+	    }, {
+	      "id": 1,
+	      "created": "2015-08-29T15:55:06+0000",
+	      "name": "Artist 1"
+	    }];
+
+	    _dispatchersDispatcher2['default'].dispatch({
+	      actionType: _constantsArtistActionConstants2['default'].ARTISTS_LOADED,
+	      data: artists
+	    });
+	  }
+
+	  //NOT FLUXED
+	  // getFestivalArtists(festival) {
+	  //   api call
+	  //   let festivalArtists =
+	  //     [
+	  //       {
+	  //           "id": 1,
+	  //           "created": "2015-08-29T15:55:06+0000",
+	  //           "name": "Artist 1"
+	  //       },
+	  //       {
+	  //           "id": 1,
+	  //           "created": "2015-08-29T15:55:06+0000",
+	  //           "name": "Artist 1"
+	  //       }
+	  //     ]
+	  //   return festivalArtists;
+	  // }
+
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactable = __webpack_require__(250);
+
+	var _reactable2 = _interopRequireDefault(_reactable);
+
+	var Table = _reactable2['default'].Table;
+	var Tr = _reactable2['default'].Tr;
+
+	var RankingsTable = (function (_React$Component) {
+	  _inherits(RankingsTable, _React$Component);
+
+	  function RankingsTable(props) {
+	    _classCallCheck(this, RankingsTable);
+
+	    _get(Object.getPrototypeOf(RankingsTable.prototype), 'constructor', this).call(this, props);
+	  }
+
+	  _createClass(RankingsTable, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {}
+	  }, {
+	    key: 'createTableArray',
+	    value: function createTableArray(artists) {
+	      var array = [];
+	      for (var i = 0; i < artists.length; i++) {
+	        var artist = artists[i];
+	        var artistObject = {
+	          'Name': artist.name
+	        };
+	        array.push(artistObject);
+	      }
+	      return array;
+	    }
+	  }, {
+	    key: 'getTable',
+	    value: function getTable() {
+	      var array = this.createTableArray(this.props.festivalArtists);
+	      var table = _react2['default'].createElement(Table, { className: 'table', id: 'table', data: array, filterable: ['Name'] });
+	      return table;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+
+	      return this.getTable();
+	    }
+	  }]);
+
+	  return RankingsTable;
+	})(_react2['default'].Component);
+
+	exports['default'] = RankingsTable;
+	module.exports = exports['default'];
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+	    if (true) { // AMD. Register as an anonymous module.
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	        // Node. Does not work with strict CommonJS, but
+	        // only CommonJS-like environments that support module.exports,
+	        // like Node.
+	        module.exports = factory(require('react'));
+	    } else {
+	        // Browser globals (root is window)
+	        root.Reactable = factory(root.React);
+	    }
+	}(this, function (React) {
+	    "use strict";
+	    var exports = {};
+
+	    // Array.prototype.map polyfill - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map#Polyfill
+	    // Production steps of ECMA-262, Edition 5, 15.4.4.19
+	    // Reference: http://es5.github.io/#x15.4.4.19
+	    if (!Array.prototype.map) {
+
+	        Array.prototype.map = function(callback, thisArg) {
+	            var T, A, k;
+
+	            if (this === null) {
+	                throw new TypeError(" this is null or not defined");
+	            }
+
+	            var O = Object(this);
+	            var len = O.length >>> 0;
+
+	            if (typeof callback !== "function") {
+	                throw new TypeError(callback + " is not a function");
+	            }
+
+	            if (arguments.length > 1) {
+	                T = thisArg;
+	            }
+
+	            A = new Array(len);
+	            k = 0;
+
+	            while (k < len) {
+	                var kValue, mappedValue;
+	                if (k in O) {
+	                    kValue = O[k];
+	                    mappedValue = callback.call(T, kValue, k, O);
+	                    A[k] = mappedValue;
+	                }
+	                k++;
+	            }
+	            return A;
+	        };
+	    }
+
+	    // Array.prototype.indexOf polyfill for IE8
+	    if (!Array.prototype.indexOf) {
+	        Array.prototype.indexOf = function(elt /*, from*/) {
+	            var len = this.length >>> 0;
+
+	            var from = Number(arguments[1]) || 0;
+	            from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+	            if (from < 0) {
+	                from += len;
+	            }
+
+	            for (; from < len; from++) {
+	                if (from in this && this[from] === elt) {
+	                    return from;
+	                }
+	            }
+	            return -1;
+	        };
+	    }
+
+	    // Array.prototype.find polyfill - see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+	    if (!Array.prototype.find) {
+	        Object.defineProperty(Array.prototype, 'find', {
+	            enumerable: false,
+	            configurable: true,
+	            writable: true,
+	            value: function(predicate) {
+	                if (this === null) {
+	                    throw new TypeError('Array.prototype.find called on null or undefined');
+	                }
+	                if (typeof predicate !== 'function') {
+	                    throw new TypeError('predicate must be a function');
+	                }
+	                var list = Object(this);
+	                var length = list.length >>> 0;
+	                var thisArg = arguments[1];
+	                var value;
+
+	                for (var i = 0; i < length; i++) {
+	                    if (i in list) {
+	                        value = list[i];
+	                        if (predicate.call(thisArg, value, i, list)) {
+	                            return value;
+	                        }
+	                    }
+	                }
+	                return undefined;
+	            }
+	        });
+	    }
+
+	    if (!Array.isArray) {
+	        Array.isArray = function (value) {
+	            return Object.prototype.toString.call(value) === '[object Array]';
+	        };
+	    }
+
+	    if (!Object.assign) {
+	        Object.defineProperty(Object, "assign", {
+	            enumerable: false,
+	            configurable: true,
+	            writable: true,
+	            value: function(target, firstSource) {
+	                if (target === undefined || target === null)
+	                    throw new TypeError("Cannot convert first argument to object");
+	                var to = Object(target);
+	                for (var i = 1; i < arguments.length; i++) {
+	                    var nextSource = arguments[i];
+	                    if (nextSource === undefined || nextSource === null) continue;
+	                    var keysArray = Object.keys(Object(nextSource));
+	                    for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+	                        var nextKey = keysArray[nextIndex];
+	                        var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+	                        if (desc !== undefined && desc.enumerable) to[nextKey] = nextSource[nextKey];
+	                    }
+	                }
+	                return to;
+	            }
+	        });
+	    }
+
+	    function Unsafe(content) {
+	        this.content = content;
+	    }
+
+	    Unsafe.prototype.toString = function() {
+	        return this.content;
+	    };
+
+	    function stringable(thing) {
+	        return thing !== null && typeof(thing) !== 'undefined' && typeof(thing.toString === 'function');
+	    }
+
+	    // this is a bit hacky - it'd be nice if React exposed an API for this
+	    function isReactComponent(thing) {
+	        return thing !== null && typeof(thing) === 'object' && typeof(thing.props) !== 'undefined';
+	    }
+
+	    React.Children.children = function(children) {
+	        return React.Children.map(children, function(x) { return x; }) || [];
+	    };
+
+	    exports.unsafe = function(str) {
+	        return new Unsafe(str);
+	    };
+
+	    exports.Sort = {
+	        Numeric: function(a, b) {
+	            var valA = parseFloat(a.toString().replace(/,/g,''));
+	            var valB = parseFloat(b.toString().replace(/,/g,''));
+
+	            // Sort non-numeric values alphabetically at the bottom of the list
+	            if (isNaN(valA) && isNaN(valB)) {
+	                valA = a;
+	                valB = b;
+	            } else {
+	                if (isNaN(valA)) {
+	                    return 1;
+	                }
+	                if (isNaN(valB)) {
+	                    return -1;
+	                }
+	            }
+
+	            if (valA < valB) {
+	                return -1;
+	            }
+	            if (valA > valB) {
+	                return 1;
+	            }
+
+	            return 0;
+	        },
+
+	        NumericInteger: function(a, b) {
+	          if (isNaN(a) || isNaN(b)) {
+	            return a > b ? 1 : -1;
+	          }
+
+	          return a - b;
+	        },
+
+	        Currency: function(a, b) {
+	            // Parse out dollar signs, then do a regular numeric sort
+	            // TODO: handle non-American currency
+
+	            if (a[0] === '$') {
+	                a = a.substring(1);
+	            }
+	            if (b[0] === '$') {
+	                b = b.substring(1);
+	            }
+
+	            return exports.Sort.Numeric(a, b);
+	        },
+
+	        Date: function(a, b) {
+	            // Note: this function tries to do a standard javascript string -> date conversion
+	            // If you need more control over the date string format, consider using a different
+	            // date library and writing your own function
+	            var valA = Date.parse(a);
+	            var valB = Date.parse(b);
+
+	            // Handle non-date values with numeric sort
+	            // Sort non-numeric values alphabetically at the bottom of the list
+	            if (isNaN(valA) || isNaN(valB)) {
+	                return exports.Sort.Numeric(a, b);
+	            }
+
+	            if (valA > valB) {
+	                return 1;
+	            }
+	            if (valB > valA) {
+	                return -1;
+	            }
+
+	            return 0;
+	        },
+
+	        CaseInsensitive: function(a, b) {
+	            return a.toLowerCase().localeCompare(b.toLowerCase());
+	        }
+	    };
+
+	    var Td = exports.Td = React.createClass({displayName: "Td",
+	        handleClick: function(e){
+	            if (typeof this.props.handleClick === 'function') {
+	                return this.props.handleClick(e, this);
+	            }
+	        },
+	        render: function() {
+	            var tdProps = {
+	                className: this.props.className,
+	                onClick: this.handleClick
+	            };
+
+	            // Attach any properties on the column to this Td object to allow things like custom event handlers
+	            if (typeof(this.props.column) === 'object') {
+	                for (var key in this.props.column) {
+	                    if (key !== 'key' && key !== 'name') {
+	                        tdProps[key] = this.props.column[key];
+	                    }
+	                }
+	            }
+
+	            var data = this.props.data;
+
+	            if (typeof(this.props.children) !== 'undefined') {
+	                if (isReactComponent(this.props.children)) {
+	                    data = this.props.children;
+	                } else if (
+	                    typeof(this.props.data) === 'undefined' &&
+	                        stringable(this.props.children)
+	                ) {
+	                    data = this.props.children.toString();
+	                }
+
+	                if (this.props.children instanceof Unsafe) {
+	                    tdProps.dangerouslySetInnerHTML = { __html: this.props.children.toString() };
+	                } else {
+	                    tdProps.children = data;
+	                }
+	            }
+
+	            return React.DOM.td(tdProps);
+	        }
+	    });
+
+
+	    var Tr = exports.Tr = React.createClass({displayName: "Tr",
+	        statics: {
+	            childNode: Td,
+	            dataType: 'object'
+	        },
+	        render: function() {
+	            var children = toArray(React.Children.children(this.props.children));
+
+	            if (
+	                this.props.data &&
+	                    this.props.columns &&
+	                        typeof this.props.columns.map === 'function'
+	            ) {
+	                if (typeof(children.concat) === 'undefined') { console.log(children); }
+
+	                children = children.concat(this.props.columns.map(function(column, i) {
+	                    if (this.props.data.hasOwnProperty(column.key)) {
+	                        var value = this.props.data[column.key];
+	                        var props = {};
+
+	                        if (
+	                            typeof(value) !== 'undefined' &&
+	                                value !== null &&
+	                                    value.__reactableMeta === true
+	                        ) {
+	                            props = value.props;
+	                            value = value.value;
+	                        }
+
+	                        return React.createElement(Td, React.__spread({column: column, key: column.key},  props), value);
+	                    } else {
+	                        return React.createElement(Td, {column: column, key: column.key});
+	                    }
+	                }.bind(this)));
+	            }
+
+	            // Manually transfer props
+	            var props = filterPropsFrom(this.props);
+
+	            return React.DOM.tr(props, children);
+	        }
+	    });
+
+	    var Thead = exports.Thead = React.createClass({displayName: "Thead",
+	        getColumns: function() {
+	            return React.Children.map(this.props.children, function(th) {
+	                if (typeof th.props.children === 'string') {
+	                    return th.props.children;
+	                } else {
+	                    throw new TypeError('<th> must have a string child');
+	                }
+	            });
+	        },
+	        handleClickTh: function (column) {
+	            this.props.onSort(column.key);
+	        },
+	        render: function() {
+
+	            // Declare the list of Ths
+	            var Ths = [];
+	            for (var index = 0; index < this.props.columns.length; index++) {
+	                var column = this.props.columns[index];
+	                var sortClass = '';
+
+	                if (this.props.sortableColumns[column.key]) {
+	                    sortClass += 'reactable-header-sortable ';
+	                }
+
+	                if (this.props.sort.column === column.key) {
+	                    sortClass += 'reactable-header-sort';
+	                    if (this.props.sort.direction === 1) {
+	                        sortClass += '-asc';
+	                    }
+	                    else {
+	                        sortClass += '-desc';
+	                    }
+	                }
+
+	                Ths.push(
+	                    React.createElement(Th, {className: sortClass, key: index, onClick: this.handleClickTh.bind(this, column)}, 
+	                        column.label
+	                    )
+	                );
+	            }
+
+	            // Manually transfer props
+	            var props = filterPropsFrom(this.props);
+
+	            return (
+	                React.createElement("thead", React.__spread({},  props), 
+	                    this.props.filtering === true ?
+	                        React.createElement(Filterer, {
+	                            colSpan: this.props.columns.length, 
+	                            onFilter: this.props.onFilter, 
+	                            placeholder: this.props.filterPlaceholder, 
+	                            value: this.props.currentFilter}
+	                        ) : '', 
+	                    React.createElement("tr", {className: "reactable-column-header"}, Ths)
+	                )
+	            );
+	        }
+	    });
+
+	    var Th = exports.Th = React.createClass({displayName: "Th",
+	        render: function() {
+	                var childProps
+	            if (this.props.children instanceof Unsafe) {
+	                return React.createElement("th", React.__spread({},  filterPropsFrom(this.props), 
+	                    {dangerouslySetInnerHTML: {__html: this.props.children.toString()}}))
+	            } else {
+	                return React.createElement("th", React.__spread({},  filterPropsFrom(this.props)), 
+	                    this.props.children
+	                );
+	            }
+	        }
+	    });
+
+	    var FiltererInput = React.createClass({displayName: "FiltererInput",
+	        onChange: function() {
+	            this.props.onFilter(this.getDOMNode().value);
+	        },
+	        render: function() {
+	            return (
+	                React.createElement("input", {type: "text", 
+	                    className: "reactable-filter-input", 
+	                    placeholder: this.props.placeholder, 
+	                    value: this.props.value, 
+	                    onKeyUp: this.onChange, 
+	                    onChange: this.onChange})
+	            );
+	        }
+	    });
+
+	    var Filterer = React.createClass({displayName: "Filterer",
+	        render: function() {
+	            if (typeof this.props.colSpan === 'undefined') {
+	                throw new TypeError('Must pass a colSpan argument to Filterer');
+	            }
+
+	            return (
+	                React.createElement("tr", {className: "reactable-filterer"}, 
+	                    React.createElement("td", {colSpan: this.props.colSpan}, 
+	                        React.createElement(FiltererInput, {onFilter: this.props.onFilter, 
+	                            value: this.props.value, 
+	                            placeholder: this.props.placeholder})
+	                    )
+	                )
+	            );
+	        }
+	    });
+
+	    var Paginator = React.createClass({displayName: "Paginator",
+	        render: function() {
+	            if (typeof this.props.colSpan === 'undefined') {
+	                throw new TypeError('Must pass a colSpan argument to Paginator');
+	            }
+
+	            if (typeof this.props.numPages === 'undefined') {
+	                throw new TypeError('Must pass a non-zero numPages argument to Paginator');
+	            }
+
+	            if (typeof this.props.currentPage === 'undefined') {
+	                throw new TypeError('Must pass a currentPage argument to Paginator');
+	            }
+
+	            var pageButtons = [];
+	            for (var i = 0; i < this.props.numPages; i++) {
+	                var pageNum = i;
+	                var className = "reactable-page-button";
+	                if (this.props.currentPage === i) {
+	                    className += " reactable-current-page";
+	                }
+
+	                pageButtons.push(
+	                    React.createElement("a", {className: className, key: i, 
+	                        // create function to get around for-loop closure issue
+	                        onClick: (function(pageNum) {
+	                            return function() {
+	                                this.props.onPageChange(pageNum);
+	                            }.bind(this);
+	                        }.bind(this))(i)}, i + 1)
+	                );
+	            }
+
+	            return (
+	                React.createElement("tbody", {className: "reactable-pagination"}, 
+	                    React.createElement("tr", null, 
+	                        React.createElement("td", {colSpan: this.props.colSpan}, 
+	                            pageButtons
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    });
+
+	    var Table = exports.Table = React.createClass({displayName: "Table",
+	        // Translate a user defined column array to hold column objects if strings are specified
+	        // (e.g. ['column1'] => [{key: 'column1', label: 'column1'}])
+	        translateColumnsArray: function(columns) {
+	            return columns.map(function(column, i) {
+	                if (typeof(column) === 'string') {
+	                    return {
+	                        key:   column,
+	                        label: column
+	                    };
+	                } else {
+	                    if (typeof(column.sortable) !== 'undefined') {
+	                        var sortFunction = column.sortable === true ? 'default' : column.sortable;
+	                        this._sortable[column.key] = sortFunction;
+	                    }
+
+	                    return column;
+	                }
+	            }.bind(this));
+	        },
+	        parseChildData: function(props) {
+	            var data = [];
+
+	            // Transform any children back to a data array
+	            if (typeof(props.children) !== 'undefined') {
+	                React.Children.forEach(props.children, function(child) {
+	                    // TODO: figure out a new way to determine the type of a component
+	                    /*
+	                       if (child.type.ConvenienceConstructor !== Tr) {
+	                       return; // (continue)
+	                       }
+	                       */
+	                    if (child == null || typeof(child.props) !== 'object') { return; }
+
+	                    var childData = child.props.data || {};
+
+	                    React.Children.forEach(child.props.children, function(descendant) {
+	                        // TODO
+	                        /* if (descendant.type.ConvenienceConstructor === Td) { */
+	                        if (
+	                            typeof(descendant) !== 'object' ||
+	                            descendant == null
+	                        ) {
+	                            return;
+	                        } else if (typeof(descendant.props.column) !== 'undefined') {
+	                            var value;
+
+	                            if (typeof(descendant.props.data) !== 'undefined') {
+	                                value = descendant.props.data;
+	                            } else if (typeof(descendant.props.children) !== 'undefined') {
+	                                value = descendant.props.children;
+	                            } else {
+	                                console.warn('exports.Td specified without ' +
+	                                             'a `data` property or children, ' +
+	                                             'ignoring');
+	                                return;
+	                            }
+
+	                            childData[descendant.props.column] = {
+	                                value: value,
+	                                props: filterPropsFrom(descendant.props),
+	                                __reactableMeta: true
+	                            };
+	                        } else {
+	                            console.warn('exports.Td specified without a ' +
+	                                         '`column` property, ignoring');
+	                        }
+	                    });
+
+	                    data.push({
+	                        data: childData,
+	                        props: filterPropsFrom(child.props),
+	                        __reactableMeta: true
+	                    });
+	                }.bind(this));
+	            }
+
+	            return data;
+	        },
+
+	        initialize: function(props) {
+	            this.data = props.data || [];
+	            this.data = this.data.concat(this.parseChildData(props));
+	            this.initializeSorts(props);
+	        },
+
+	        initializeSorts: function() {
+	            this._sortable = {};
+	            // Transform sortable properties into a more friendly list
+	            for (var i in this.props.sortable) {
+	                var column = this.props.sortable[i];
+	                var columnName, sortFunction;
+
+	                if (column instanceof Object) {
+	                    if (typeof(column.column) !== 'undefined') {
+	                        columnName = column.column;
+	                    } else {
+	                        console.warn('Sortable column specified without column name');
+	                        return;
+	                    }
+
+	                    if (typeof(column.sortFunction) === 'function') {
+	                        sortFunction = column.sortFunction;
+	                    } else {
+	                        sortFunction = 'default';
+	                    }
+	                } else {
+	                    columnName      = column;
+	                    sortFunction    = 'default';
+	                }
+
+	                this._sortable[columnName] = sortFunction;
+	            }
+	        },
+
+	        getDefaultProps: function() {
+	            var defaultProps = {
+	                sortBy: false,
+	                defaultSort: false,
+	                itemsPerPage: 0,
+	            };
+	            return defaultProps;
+	        },
+
+	        getInitialState: function() {
+	            var initialState = {
+	                currentPage: 0,
+	                currentSort: {
+	                    column: null,
+	                    direction: 1
+	                },
+	                filter: ''
+	            };
+
+	            // Set the state of the current sort to the default sort
+	            if (this.props.sortBy !== false || this.props.defaultSort !== false) {
+	                var sortingColumn = this.props.sortBy || this.props.defaultSort;
+	                initialState.currentSort = this.getCurrentSort(sortingColumn);
+	            }
+	            return initialState;
+	        },
+
+	        getCurrentSort: function(column) {
+	            var columnName, sortDirection;
+
+	            if (column instanceof Object) {
+	                if (typeof(column.column) !== 'undefined') {
+	                    columnName = column.column;
+	                } else {
+	                    console.warn('Default column specified without column name');
+	                    return;
+	                }
+
+	                if (typeof(column.direction) !== 'undefined') {
+	                    if (column.direction === 1 || column.direction === 'asc') {
+	                        sortDirection = 1;
+	                    } else if (column.direction === -1 || column.direction === 'desc') {
+	                        sortDirection = -1;
+	                    } else {
+	                        console.warn('Invalid default sort specified.  Defaulting to ascending');
+	                        sortDirection = 1;
+	                    }
+	                } else {
+	                    sortDirection = 1;
+	                }
+	            } else {
+	                columnName      = column;
+	                sortDirection   = 1;
+	            }
+
+	            return {
+	                column: columnName,
+	                direction: sortDirection
+	            };
+	        },
+
+	        updateCurrentSort: function(sortBy) {
+	            if (sortBy !== false &&
+	                sortBy.column !== this.state.currentSort.column &&
+	                    sortBy.direction !== this.state.currentSort.direction) {
+
+	                this.setState({ currentSort: this.getCurrentSort(sortBy) });
+	            }
+	        },
+
+	        componentWillMount: function() {
+	            this.initialize(this.props);
+	            this.sortByCurrentSort();
+	        },
+	        componentWillReceiveProps: function(nextProps) {
+	            this.initialize(nextProps);
+	            this.updateCurrentSort(nextProps.sortBy);
+	            this.sortByCurrentSort();
+	        },
+	        onPageChange: function(page) {
+	            this.setState({ currentPage: page });
+	        },
+	        filterBy: function(filter) {
+	            this.setState({ filter: filter });
+	        },
+	        applyFilter: function(filter, children) {
+	            // Helper function to apply filter text to a list of table rows
+	            filter = filter.toLowerCase();
+	            var matchedChildren = [];
+
+	            for (var i = 0; i < children.length; i++) {
+	                var data = children[i].props.data;
+
+	                for (var j = 0; j < this.props.filterable.length; j++) {
+	                    var filterColumn = this.props.filterable[j];
+
+	                    if (
+	                        typeof(data[filterColumn]) !== 'undefined' &&
+	                            extractDataFrom(data, filterColumn).toString().toLowerCase().indexOf(filter) > -1
+	                    ) {
+	                        matchedChildren.push(children[i]);
+	                        break;
+	                    }
+	                }
+	            }
+
+	            return matchedChildren;
+	        },
+	        sortByCurrentSort: function(){
+	            // Apply a sort function according to the current sort in the state.
+	            // This allows us to perform a default sort even on a non sortable column.
+	            var currentSort = this.state.currentSort;
+
+	            if (currentSort.column === null) {
+	                return;
+	            }
+
+	            this.data.sort(function(a, b){
+	                var keyA = extractDataFrom(a, currentSort.column);
+	                keyA = (keyA instanceof Unsafe) ? keyA.toString() : keyA || '';
+	                var keyB = extractDataFrom(b, currentSort.column);
+	                keyB = (keyB instanceof Unsafe) ? keyB.toString() : keyB || '';
+
+	                // Default sort
+	                if (
+	                    typeof(this._sortable[currentSort.column]) === 'undefined' ||
+	                        this._sortable[currentSort.column] === 'default'
+	                ) {
+
+	                    // Reverse direction if we're doing a reverse sort
+	                    if (keyA < keyB) {
+	                        return -1 * currentSort.direction;
+	                    }
+
+	                    if (keyA > keyB) {
+	                        return 1 * currentSort.direction;
+	                    }
+
+	                    return 0;
+	                } else {
+	                    // Reverse columns if we're doing a reverse sort
+	                    if (currentSort.direction === 1) {
+	                        return this._sortable[currentSort.column](keyA, keyB);
+	                    } else {
+	                        return this._sortable[currentSort.column](keyB, keyA);
+	                    }
+	                }
+	            }.bind(this));
+	        },
+	        onSort: function(column) {
+	            // Don't perform sort on unsortable columns
+	            if (typeof(this._sortable[column]) === 'undefined') {
+	                return;
+	            }
+
+	            var currentSort = this.state.currentSort;
+
+	            if (currentSort.column === column) {
+	                currentSort.direction *= -1;
+	            } else {
+	                currentSort.column = column;
+	                currentSort.direction = 1;
+	            }
+
+	            // Set the current sort and pass it to the sort function
+	            this.setState({ currentSort: currentSort });
+	            this.sortByCurrentSort();
+	        },
+	        render: function() {
+	            var children = [];
+	            var columns;
+	            var userColumnsSpecified = false;
+
+	            if (
+	                this.props.children &&
+	                    this.props.children.length > 0 &&
+	                        this.props.children[0].type.ConvenienceConstructor === Thead
+	            ) {
+	                columns = this.props.children[0].getColumns();
+	            } else {
+	                columns = this.props.columns || [];
+	            }
+
+	            if (columns.length > 0) {
+	                userColumnsSpecified = true;
+	                columns = this.translateColumnsArray(columns);
+	            }
+
+	            // Build up table rows
+	            if (this.data && typeof this.data.map === 'function') {
+	                // Build up the columns array
+	                children = children.concat(this.data.map(function(rawData, i) {
+	                    var data = rawData;
+	                    var props = {};
+	                    if (rawData.__reactableMeta === true) {
+	                        data = rawData.data;
+	                        props = rawData.props;
+	                    }
+
+	                    // Loop through the keys in each data row and build a td for it
+	                    for (var k in data) {
+	                        if (data.hasOwnProperty(k)) {
+	                            // Update the columns array with the data's keys if columns were not
+	                            // already specified
+	                            if (userColumnsSpecified === false) {
+	                                var column = {
+	                                    key:   k,
+	                                    label: k
+	                                };
+
+	                                // Only add a new column if it doesn't already exist in the columns array
+	                                if (
+	                                    columns.find(function(element) {
+	                                    return element.key === column.key;
+	                                }) === undefined
+	                                ) {
+	                                    columns.push(column);
+	                                }
+	                            }
+	                        }
+	                    }
+
+	                    return (
+	                        React.createElement(Tr, React.__spread({columns: columns, key: i, data: data},  props))
+	                    );
+	                }.bind(this)));
+	            }
+
+	            if (this.props.sortable === true) {
+	                for (var i = 0; i < columns.length; i++) {
+	                    this._sortable[columns[i].key] = 'default';
+	                }
+	            }
+
+	            // Determine if we render the filter box
+	            var filtering = false;
+	            if (
+	                this.props.filterable &&
+	                    Array.isArray(this.props.filterable) &&
+	                        this.props.filterable.length > 0
+	            ) {
+	                filtering = true;
+	            }
+
+	            // Apply filters
+	            var filteredChildren = children;
+	            if (this.state.filter !== '') {
+	                filteredChildren = this.applyFilter(this.state.filter, filteredChildren);
+	            }
+
+	            // Determine pagination properties and which columns to display
+	            var itemsPerPage = 0;
+	            var pagination = false;
+	            var numPages;
+	            var currentPage = this.state.currentPage;
+
+	            var currentChildren = filteredChildren;
+	            if (this.props.itemsPerPage > 0) {
+	                itemsPerPage = this.props.itemsPerPage;
+	                numPages = Math.ceil(filteredChildren.length / itemsPerPage);
+
+	                if (currentPage > numPages - 1) {
+	                    currentPage = numPages - 1;
+	                }
+
+	                pagination = true;
+	                currentChildren = filteredChildren.slice(
+	                    currentPage * itemsPerPage,
+	                    (currentPage + 1) * itemsPerPage
+	                );
+	            }
+
+	            // Manually transfer props
+	            var props = filterPropsFrom(this.props);
+
+	            return React.createElement("table", React.__spread({},  props), [
+	                (columns && columns.length > 0 ?
+	                 React.createElement(Thead, {columns: columns, 
+	                     filtering: filtering, 
+	                     onFilter: this.filterBy, 
+	                     filterPlaceholder: this.props.filterPlaceholder, 
+	                     currentFilter: this.state.filter, 
+	                     sort: this.state.currentSort, 
+	                     sortableColumns: this._sortable, 
+	                     onSort: this.onSort, 
+	                     key: "thead"})
+	                 : null
+	                ),
+	                React.createElement("tbody", {className: "reactable-data", key: "tbody"}, 
+	                    currentChildren
+	                ),
+	                (pagination === true ?
+	                 React.createElement(Paginator, {colSpan: columns.length, 
+	                     numPages: numPages, 
+	                     currentPage: currentPage, 
+	                     onPageChange: this.onPageChange, 
+	                     key: "paginator"})
+	                 : null
+	                )
+	            ]);
+	        }
+	    });
+
+	    function toArray(obj) {
+	        var ret = [];
+	        for (var attr in obj) {
+	            ret[attr] = obj;
+	        }
+
+	        return ret;
+	    }
+
+	    function filterPropsFrom(baseProps) {
+	        baseProps = baseProps || {};
+	        var props = {};
+	        for (var key in baseProps) {
+	            if (!(key in internalProps)) {
+	                props[key] = baseProps[key];
+	            }
+	        }
+	        return props;
+	    }
+
+	    function extractDataFrom(key, column) {
+	        var value;
+	        if (
+	            typeof(key) !== 'undefined' &&
+	                key !== null &&
+	                    key.__reactableMeta === true
+	        ) {
+	            value = key.data[column];
+	        } else {
+	            value = key[column];
+	        }
+
+	        if (
+	            typeof(value) !== 'undefined' &&
+	                value !== null &&
+	                    value.__reactableMeta === true
+	        ) {
+	            value = (typeof(value.props.value) !== 'undefined' && value.props.value !== null) ?
+	                value.props.value : value.value;
+	        }
+
+	        return (stringable(value) ? value : '');
+	    }
+
+	    var internalProps = {
+	        columns: true,
+	        sortable: true,
+	        filterable: true,
+	        sortBy: true,
+	        defaultSort: true,
+	        itemsPerPage: true,
+	        childNode: true,
+	        data: true,
+	        children: true
+	    };
+
+	    return exports;
+	}));
+
+
+/***/ },
+/* 251 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = {
+	  ARTISTS_LOADED: 'ARTISTS_LOADED',
+	  FESTIVALARTISTS_LOADED: 'FESTIVALARTISTS_LOADED'
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _dispatchersDispatcher = __webpack_require__(230);
+
+	var _dispatchersDispatcher2 = _interopRequireDefault(_dispatchersDispatcher);
+
+	var _CoreStore = __webpack_require__(246);
+
+	var _CoreStore2 = _interopRequireDefault(_CoreStore);
+
+	var _constantsArtistActionConstantsJs = __webpack_require__(251);
+
+	var _constantsArtistActionConstantsJs2 = _interopRequireDefault(_constantsArtistActionConstantsJs);
+
+	var _artists = [];
+
+	function Artist(artist) {
+	  //reformat the festival object to match what you want
+	  this.id = artist.artist_id;
+	  this.name = artist.name;
+	}
+
+	function loadArtists(artists) {
+	  artists.forEach(createArtist);
+	}
+
+	function createArtist(artist, index, array) {
+	  var newArtist = new Artist(artist);
+	  _artists.push(newArtist);
+	}
+
+	var ArtistStore = (function (_Store) {
+	  _inherits(ArtistStore, _Store);
+
+	  function ArtistStore() {
+	    _classCallCheck(this, ArtistStore);
+
+	    _get(Object.getPrototypeOf(ArtistStore.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(ArtistStore, [{
+	    key: 'getArtists',
+	    value: function getArtists() {
+	      return _artists;
+	    }
+	  }]);
+
+	  return ArtistStore;
+	})(_CoreStore2['default']);
+
+	var ArtistsStore = new ArtistStore();
+
+	_dispatchersDispatcher2['default'].register(function (action) {
+	  switch (action.actionType) {
+	    case _constantsArtistActionConstantsJs2['default'].ARTISTS_LOADED:
+	      loadArtists(action.data);
+	      ArtistsStore.emitChange();
+	      break;
+
+	  }
+	});
+
+	exports['default'] = ArtistsStore;
+	module.exports = exports['default'];
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+	var _axios = __webpack_require__(207);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	exports["default"] = {
+	  //
+	  // NOT FLUXED
+	  getFestivalArtists: function getFestivalArtists(festival) {
+	    // api call
+	    var festivalArtists = undefined;
+	    if (festival == "Bonaroo") {
+	      festivalArtists = [{
+	        "id": 1,
+	        "created": "2015-08-29T15:55:06+0000",
+	        "name": "Kanye"
+	      }, {
+	        "id": 1,
+	        "created": "2015-08-29T15:55:06+0000",
+	        "name": "Tupac"
+	      }];
+	    }
+	    if (festival == "Coachella") {
+	      festivalArtists = [{
+	        "id": 1,
+	        "created": "2015-08-29T15:55:06+0000",
+	        "name": "Artist 1"
+	      }, {
+	        "id": 1,
+	        "created": "2015-08-29T15:55:06+0000",
+	        "name": "Artist 1"
+	      }];
+	    }
+
+	    return festivalArtists;
+	  }
+
+	};
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);

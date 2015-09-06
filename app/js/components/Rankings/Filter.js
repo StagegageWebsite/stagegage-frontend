@@ -9,7 +9,7 @@ class Filter extends React.Component{
       <div className="container">
         <div className="row">
           <h3>Choose Festival</h3>
-          <SelectFestival festivals={this.props.festivals}/>
+          <SelectFestival festivals={this.props.festivals} onOptionSelected={this.props.onOptionSelected}/>
           <table>
 
           </table>

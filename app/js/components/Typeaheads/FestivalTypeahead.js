@@ -22,7 +22,7 @@ export default class FestivalTypeahead extends React.Component {
                 displayOption = {this._getFestivalNames}
                 filterOption = "name"
                 maxVisible = { 5 }
-                onOptionSelected = {this.props.onOptionSelected }/>
+                onOptionSelected = {this.props.onOptionSelected}/>
                 )
 
 
