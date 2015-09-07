@@ -14,7 +14,6 @@ export default class RankingsTable extends React.Component {
   }
 
   createTableArray(artists, genres) {
-    console.log(genres);
     let array = [];
     for (var i = 0; i < artists.length; i++) {
       let artist = artists[i];

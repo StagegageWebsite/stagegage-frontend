@@ -1,37 +1,74 @@
 import React from 'react';
-import { Checkbox } from 'react-btn-checkbox';
 
 export default class SelectGenre extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      'HipHop': false,
-      'Rap': false,
-      'Alternative': false
+      selectedGenres: [null]
     }
+
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let genres = [];
-    if (this.state.HipHop) {
-      genres.push("HipHop");
-    }
-    if (this.state.Rap) {
-      genres.push("Rap");
-    }
-    if (this.state.Alternative) {
-      genres.push("Alternative");
-    }
-    this.props.selectGenres(genres);
+
+  }
+
+  genregenreHandler(event) {
+    console.log(event.target.value);
   }
 
   render() {
-
-    return (<Checkbox
-      options={this.state}
-      onChange={this.setState.bind(this)}
-      bootstrap />)
+    let blah = (
+      <form value="blah" onSubmit={this.genreHandler}>
+        <div className="checkbox" >
+          <label>
+            <input type="checkbox" value="HipHop" onChange={this.genreHandler} > HipHop</input>
+          </label>
+        </div>
+        <div className="checkbox" >
+          <label>
+            <input type="checkbox" value="Rap" onChange={this.genreHandler}> Rap</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> R&B</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> Alternative</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> Electronic</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> Country</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> Rock</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> Pop</input>
+          </label>
+        </div>
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" value="Alternative" onChange={this.genreHandler}> Dance</input>
+          </label>
+        </div>
+        <button type="submit" value="HipHop" className="btn btn-default">Update Rankings</button>
+      </form> )
+    return blah;
 
   }
 
