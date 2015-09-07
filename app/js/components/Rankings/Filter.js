@@ -1,6 +1,7 @@
 import React from 'react';
 import Actions from '../../actions/FestivalActions';
 import SelectFestival from './SelectFestival'
+import SelectGenre from './SelectGenre'
 
 class Filter extends React.Component{
 
@@ -9,13 +10,14 @@ class Filter extends React.Component{
       <div className="container">
         <div className="row">
           <h3>Choose Festival</h3>
-          <SelectFestival festivals={this.props.festivals} onOptionSelected={this.props.onOptionSelected}/>
+          <SelectFestival festivals={this.props.festivals} onOptionSelected={this.props.onOptionSelected} />
           <table>
 
           </table>
         </div>
         <div className="row">
           <h3>Select Genre</h3>
+          <SelectGenre selectGenres={this.props.selectGenres}/>
         </div>
       </div>
     )

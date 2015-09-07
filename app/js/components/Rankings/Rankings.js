@@ -13,7 +13,8 @@ export default class Rankings extends React.Component{
     super(props);
     this.state = {
       festivals: FestivalStore.getFestivals(),
-      festivalArtists: ArtistApiCalls.getFestivalArtists('Bonaroo')
+      festivalArtists: ArtistApiCalls.getFestivalArtists('Bonaroo'),
+      selectedGenres: ["Alternative"]
     };
 
     this._onChange = this._onChange.bind(this);
@@ -39,8 +40,11 @@ export default class Rankings extends React.Component{
   _onOptionSelected(selected, e) {
     let artists = ArtistApiCalls.getFestivalArtists(selected.name);
 
-    let nextState =
     this.setState({festivalArtists: artists});
+  }
+
+  _selectGenres(selected, e) {
+    this.state.selectedGenres= selected;
   }
 
   render() {
@@ -48,16 +52,17 @@ export default class Rankings extends React.Component{
       <div className="row">
         <div className="col-md-4">
         <h1>Full Rankings</h1>
-          <Filter festivals={this.state.festivals} onOptionSelected={this._onOptionSelected.bind(this)}/>
+          <Filter festivals={this.state.festivals}
+                  onOptionSelected={this._onOptionSelected.bind(this)}
+                  selectGenres={this._selectGenres.bind(this)}/>
         </div>
         <div className="col-md-8">
         <h1>Results</h1>
-          <RankingsTable festivalArtists={this.state.festivalArtists}/>
+          <RankingsTable festivalArtists={this.state.festivalArtists} genres={this.state.selectedGenres}/>
         </div>
       </div>
     )
   }
-
 }
 
 Rankings.contextTypes = {
