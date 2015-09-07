@@ -13,7 +13,7 @@ export default class RankingsTable extends React.Component {
     this.getTable();
   }
 
-  createTableArray(artists, genres) {
+  createTableArray(artists) {
     let array = [];
     for (var i = 0; i < artists.length; i++) {
       let artist = artists[i];
@@ -27,7 +27,7 @@ export default class RankingsTable extends React.Component {
   }
 
   getTable() {
-    var array = this.createTableArray(this.props.festivalArtists, this.props.genres);
+    var array = this.createTableArray(this.props.festivalArtists);
     var table = (<Table className="table" id="table" data={array} filterable={['Name', 'Genres']}/>)
     return table;
   }

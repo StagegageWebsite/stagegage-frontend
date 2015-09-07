@@ -14,7 +14,6 @@ export default class Rankings extends React.Component{
     this.state = {
       festivals: FestivalStore.getFestivals(),
       festivalArtists: ArtistApiCalls.getFestivalArtists('Bonaroo'),
-      selectedGenres: ["Alternative"]
     };
 
     this._onChange = this._onChange.bind(this);
@@ -54,11 +53,11 @@ export default class Rankings extends React.Component{
         <h1>Full Rankings</h1>
           <Filter festivals={this.state.festivals}
                   onOptionSelected={this._onOptionSelected.bind(this)}
-                  selectGenres={this._selectGenres.bind(this)}/>
+                  />
         </div>
         <div className="col-md-8">
         <h1>Results</h1>
-          <RankingsTable festivalArtists={this.state.festivalArtists} genres={this.state.selectedGenres}/>
+          <RankingsTable festivalArtists={this.state.festivalArtists} />
         </div>
       </div>
     )

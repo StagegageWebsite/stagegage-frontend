@@ -11,13 +11,10 @@ class Filter extends React.Component{
         <div className="row">
           <h3>Choose Festival</h3>
           <SelectFestival festivals={this.props.festivals} onOptionSelected={this.props.onOptionSelected} />
-          <table>
-
-          </table>
         </div>
         <div className="row">
           <h3>Select Genre</h3>
-          <SelectGenre selectGenres={this.props.selectGenres}/>
+          <SelectGenre />
         </div>
       </div>
     )

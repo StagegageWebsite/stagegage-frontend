@@ -26425,8 +26425,7 @@
 	    _get(Object.getPrototypeOf(Rankings.prototype), 'constructor', this).call(this, props);
 	    this.state = {
 	      festivals: _storesFestivalStore2['default'].getFestivals(),
-	      festivalArtists: _actionsArtistApiCalls2['default'].getFestivalArtists('Bonaroo'),
-	      selectedGenres: ["Alternative"]
+	      festivalArtists: _actionsArtistApiCalls2['default'].getFestivalArtists('Bonaroo')
 	    };
 
 	    this._onChange = this._onChange.bind(this);
@@ -26477,8 +26476,8 @@
 	            'Full Rankings'
 	          ),
 	          _react2['default'].createElement(_Filter2['default'], { festivals: this.state.festivals,
-	            onOptionSelected: this._onOptionSelected.bind(this),
-	            selectGenres: this._selectGenres.bind(this) })
+	            onOptionSelected: this._onOptionSelected.bind(this)
+	          })
 	        ),
 	        _react2['default'].createElement(
 	          'div',
@@ -26488,7 +26487,7 @@
 	            null,
 	            'Results'
 	          ),
-	          _react2['default'].createElement(_RankingsTable2['default'], { festivalArtists: this.state.festivalArtists, genres: this.state.selectedGenres })
+	          _react2['default'].createElement(_RankingsTable2['default'], { festivalArtists: this.state.festivalArtists })
 	        )
 	      );
 	    }
@@ -26563,8 +26562,7 @@
 	            null,
 	            'Choose Festival'
 	          ),
-	          _react2['default'].createElement(_SelectFestival2['default'], { festivals: this.props.festivals, onOptionSelected: this.props.onOptionSelected }),
-	          _react2['default'].createElement('table', null)
+	          _react2['default'].createElement(_SelectFestival2['default'], { festivals: this.props.festivals, onOptionSelected: this.props.onOptionSelected })
 	        ),
 	        _react2['default'].createElement(
 	          'div',
@@ -26574,7 +26572,7 @@
 	            null,
 	            'Select Genre'
 	          ),
-	          _react2['default'].createElement(_SelectGenre2['default'], { selectGenres: this.props.selectGenres })
+	          _react2['default'].createElement(_SelectGenre2['default'], null)
 	        )
 	      );
 	    }
@@ -28213,24 +28211,32 @@
 
 	    _get(Object.getPrototypeOf(SelectGenre.prototype), "constructor", this).call(this, props);
 	    this.state = {
-	      selectedGenres: [null]
+	      HipHop: false,
+	      Rap: false,
+	      RnB: false,
+	      Alternative: false,
+	      Electronic: false,
+	      Country: false,
+	      Rock: false,
+	      Pop: false,
+	      Dance: false
 	    };
 	  }
 
 	  _createClass(SelectGenre, [{
-	    key: "componentDidUpdate",
-	    value: function componentDidUpdate(prevProps, prevState) {}
-	  }, {
-	    key: "genregenreHandler",
-	    value: function genregenreHandler(event) {
-	      console.log(event.target.value);
+	    key: "genreHandler",
+	    value: function genreHandler(event) {
+	      var nextState = this.state;
+	      var genre = event.target.value;
+	      nextState[genre] = !nextState[genre];
+	      this.setState(nextState);
 	    }
 	  }, {
 	    key: "render",
 	    value: function render() {
 	      var blah = _react2["default"].createElement(
-	        "form",
-	        { value: "blah", onSubmit: this.genreHandler },
+	        "div",
+	        null,
 	        _react2["default"].createElement(
 	          "div",
 	          { className: "checkbox" },
@@ -28265,7 +28271,7 @@
 	            null,
 	            _react2["default"].createElement(
 	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
+	              { type: "checkbox", value: "RnB", onChange: this.genreHandler },
 	              " R&B"
 	            )
 	          )
@@ -28291,7 +28297,7 @@
 	            null,
 	            _react2["default"].createElement(
 	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
+	              { type: "checkbox", value: "Electronic", onChange: this.genreHandler },
 	              " Electronic"
 	            )
 	          )
@@ -28304,7 +28310,7 @@
 	            null,
 	            _react2["default"].createElement(
 	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
+	              { type: "checkbox", value: "Country", onChange: this.genreHandler },
 	              " Country"
 	            )
 	          )
@@ -28317,7 +28323,7 @@
 	            null,
 	            _react2["default"].createElement(
 	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
+	              { type: "checkbox", value: "Rock", onChange: this.genreHandler },
 	              " Rock"
 	            )
 	          )
@@ -28330,7 +28336,7 @@
 	            null,
 	            _react2["default"].createElement(
 	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
+	              { type: "checkbox", value: "Pop", onChange: this.genreHandler },
 	              " Pop"
 	            )
 	          )
@@ -28343,15 +28349,10 @@
 	            null,
 	            _react2["default"].createElement(
 	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
+	              { type: "checkbox", value: "Dance", onChange: this.genreHandler },
 	              " Dance"
 	            )
 	          )
-	        ),
-	        _react2["default"].createElement(
-	          "button",
-	          { type: "submit", value: "HipHop", className: "btn btn-default" },
-	          "Update Rankings"
 	        )
 	      );
 	      return blah;
@@ -29075,7 +29076,7 @@
 	    }
 	  }, {
 	    key: 'createTableArray',
-	    value: function createTableArray(artists, genres) {
+	    value: function createTableArray(artists) {
 	      var array = [];
 	      for (var i = 0; i < artists.length; i++) {
 	        var artist = artists[i];
@@ -29090,7 +29091,7 @@
 	  }, {
 	    key: 'getTable',
 	    value: function getTable() {
-	      var array = this.createTableArray(this.props.festivalArtists, this.props.genres);
+	      var array = this.createTableArray(this.props.festivalArtists);
 	      var table = _react2['default'].createElement(Table, { className: 'table', id: 'table', data: array, filterable: ['Name', 'Genres'] });
 	      return table;
 	    }
