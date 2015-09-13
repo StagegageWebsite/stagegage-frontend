@@ -1,21 +1,20 @@
 import React from 'react';
-import Filter from './Filter';
 import FestivalStore from '../../stores/FestivalStore';
 import ArtistStore from '../../stores/ArtistStore';
 import FestivalActions from '../../actions/FestivalActions';
 import ArtistActions from '../../actions/ArtistActions';
 import ArtistApiCalls from '../../actions/ArtistApiCalls';
-import RankingsTable from './RankingsTable';
-import Assign from 'object-assign';
+import Checkbox from '../Checkbox/Checkbox';
+import SelectFestival from '../Rankings/SelectFestival';
+import ArtistList from './ArtistList';
 
-export default class Rankings extends React.Component{
+export default class SelectPerformances extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       festivals: FestivalStore.getFestivals(),
       festivalArtists: ArtistApiCalls.getFestivalArtists('Bonaroo'),
-      selectedGenres: {'HipHop': true}
     };
 
     this._onChange = this._onChange.bind(this);
@@ -40,34 +39,25 @@ export default class Rankings extends React.Component{
 
   _onOptionSelected(selected, e) {
     let artists = ArtistApiCalls.getFestivalArtists(selected.name);
-
     this.setState({festivalArtists: artists});
-  }
-
-  _selectGenres(val) {
-    // this.state.selectedGenres = val;
-    // this.setState({selectedGenres: this.state.selectedGenres});
-    this.setState({selectedGenres: val});
   }
 
   render() {
     return (
-      <div className="row">
-        <div className="col-md-4">
-        <h1>Full Rankings</h1>
-          <Filter festivals={this.state.festivals}
-                  onOptionSelected={this._onOptionSelected.bind(this)}
-                  selectedGenres={this._selectGenres.bind(this)}/>
+      <div className="container">
+        <div className="row">
+          <h3>What Festival Are You Attending?</h3>
+          <SelectFestival festivals={this.state.festivals} onOptionSelected={this._onOptionSelected.bind(this) } />
         </div>
-        <div className="col-md-8">
-        <h1>Results</h1>
-          <RankingsTable festivalArtists={this.state.festivalArtists} selectedGenres={this.state.selectedGenres}/>
+        <div className="row">
+          <h3>What Artists Did You See?</h3>
+          <ArtistList artists={this.state.festivalArtists} />
         </div>
       </div>
     )
   }
 }
 
-Rankings.contextTypes = {
+SelectPerformances.contextTypes = {
   router: React.PropTypes.func.isRequired
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import Assign from 'object-assign';
 
 export default class SelectGenre extends React.Component {
 
@@ -16,21 +17,28 @@ export default class SelectGenre extends React.Component {
       Dance: false
     }
 
+    this.genreHandler = this.genreHandler.bind(this);
   }
 
-  genreHandler(event) {
+  genreHandler() {
     var nextState = this.state;
     var genre = event.target.value;
     nextState[genre] = !nextState[genre];
     this.setState(nextState);
+
+  }
+
+  _onSubmit() {
+    let state = Assign({}, this.state);
+    this.props.selectedGenres(state);
   }
 
   render() {
-    let blah = (
-      <div>
+    var blah = (
+      <form className="Form" onSubmit={this._onSubmit.bind(this)}>
         <div className="checkbox" >
           <label>
-            <input type="checkbox" value="HipHop" onChange={this.genreHandler} > HipHop</input>
+            <input type="checkbox" value="HipHop" onChange={this.genreHandler}> HipHop</input>
           </label>
         </div>
         <div className="checkbox" >
@@ -73,8 +81,13 @@ export default class SelectGenre extends React.Component {
             <input type="checkbox" value="Dance" onChange={this.genreHandler}> Dance</input>
           </label>
         </div>
-      </div>
+        <div classNames="submit-buttons">
+          <button type="submit" className="primary">Update Results</button>
+        </div>
+      </form>
  )
+
+
     return blah;
 
   }

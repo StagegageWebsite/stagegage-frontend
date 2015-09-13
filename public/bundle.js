@@ -23582,6 +23582,10 @@
 
 	var _componentsRankingsRankings2 = _interopRequireDefault(_componentsRankingsRankings);
 
+	var _componentsSubmitRankingsSelectPerformances = __webpack_require__(256);
+
+	var _componentsSubmitRankingsSelectPerformances2 = _interopRequireDefault(_componentsSubmitRankingsSelectPerformances);
+
 	var _reactRouter = __webpack_require__(157);
 
 	exports['default'] = _react2['default'].createElement(
@@ -23589,6 +23593,7 @@
 	  { name: 'app', path: '/', handler: _componentsMain2['default'] },
 	  _react2['default'].createElement(_reactRouter.Route, { name: 'profile', path: 'profile/:username', handler: _componentsProfile2['default'] }),
 	  _react2['default'].createElement(_reactRouter.Route, { name: 'rankings', path: 'rankings/:username', handler: _componentsRankingsRankings2['default'] }),
+	  _react2['default'].createElement(_reactRouter.Route, { name: 'submitRankings', path: 'selectPerformances', handler: _componentsSubmitRankingsSelectPerformances2['default'] }),
 	  _react2['default'].createElement(_reactRouter.DefaultRoute, { handler: _componentsHome2['default'] })
 	);
 	module.exports = exports['default'];
@@ -23669,6 +23674,15 @@
 	                'a',
 	                { href: 'file:///Users/Pooja/Projects/stagegage-frontend/public/index.html#/rankings/test' },
 	                'Rankings'
+	              )
+	            ),
+	            _react2['default'].createElement(
+	              'li',
+	              { role: 'presentation' },
+	              _react2['default'].createElement(
+	                'a',
+	                { href: 'file:///Users/Pooja/Projects/stagegage-frontend/public/index.html#/selectperformances/test' },
+	                'Rankings Flow'
 	              )
 	            ),
 	            _react2['default'].createElement(
@@ -26392,11 +26406,11 @@
 
 	var _Filter2 = _interopRequireDefault(_Filter);
 
-	var _storesFestivalStore = __webpack_require__(246);
+	var _storesFestivalStore = __webpack_require__(247);
 
 	var _storesFestivalStore2 = _interopRequireDefault(_storesFestivalStore);
 
-	var _storesArtistStore = __webpack_require__(249);
+	var _storesArtistStore = __webpack_require__(250);
 
 	var _storesArtistStore2 = _interopRequireDefault(_storesArtistStore);
 
@@ -26404,17 +26418,21 @@
 
 	var _actionsFestivalActions2 = _interopRequireDefault(_actionsFestivalActions);
 
-	var _actionsArtistActions = __webpack_require__(251);
+	var _actionsArtistActions = __webpack_require__(252);
 
 	var _actionsArtistActions2 = _interopRequireDefault(_actionsArtistActions);
 
-	var _actionsArtistApiCalls = __webpack_require__(252);
+	var _actionsArtistApiCalls = __webpack_require__(253);
 
 	var _actionsArtistApiCalls2 = _interopRequireDefault(_actionsArtistApiCalls);
 
-	var _RankingsTable = __webpack_require__(253);
+	var _RankingsTable = __webpack_require__(254);
 
 	var _RankingsTable2 = _interopRequireDefault(_RankingsTable);
+
+	var _objectAssign = __webpack_require__(246);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
 	var Rankings = (function (_React$Component) {
 	  _inherits(Rankings, _React$Component);
@@ -26425,7 +26443,8 @@
 	    _get(Object.getPrototypeOf(Rankings.prototype), 'constructor', this).call(this, props);
 	    this.state = {
 	      festivals: _storesFestivalStore2['default'].getFestivals(),
-	      festivalArtists: _actionsArtistApiCalls2['default'].getFestivalArtists('Bonaroo')
+	      festivalArtists: _actionsArtistApiCalls2['default'].getFestivalArtists('Bonaroo'),
+	      selectedGenres: { 'HipHop': true }
 	    };
 
 	    this._onChange = this._onChange.bind(this);
@@ -26458,8 +26477,10 @@
 	    }
 	  }, {
 	    key: '_selectGenres',
-	    value: function _selectGenres(selected, e) {
-	      this.state.selectedGenres = selected;
+	    value: function _selectGenres(val) {
+	      // this.state.selectedGenres = val;
+	      // this.setState({selectedGenres: this.state.selectedGenres});
+	      this.setState({ selectedGenres: val });
 	    }
 	  }, {
 	    key: 'render',
@@ -26476,8 +26497,8 @@
 	            'Full Rankings'
 	          ),
 	          _react2['default'].createElement(_Filter2['default'], { festivals: this.state.festivals,
-	            onOptionSelected: this._onOptionSelected.bind(this)
-	          })
+	            onOptionSelected: this._onOptionSelected.bind(this),
+	            selectedGenres: this._selectGenres.bind(this) })
 	        ),
 	        _react2['default'].createElement(
 	          'div',
@@ -26487,7 +26508,7 @@
 	            null,
 	            'Results'
 	          ),
-	          _react2['default'].createElement(_RankingsTable2['default'], { festivalArtists: this.state.festivalArtists })
+	          _react2['default'].createElement(_RankingsTable2['default'], { festivalArtists: this.state.festivalArtists, selectedGenres: this.state.selectedGenres })
 	        )
 	      );
 	    }
@@ -26551,6 +26572,7 @@
 	  _createClass(Filter, [{
 	    key: 'render',
 	    value: function render() {
+
 	      return _react2['default'].createElement(
 	        'div',
 	        { className: 'container' },
@@ -26572,7 +26594,7 @@
 	            null,
 	            'Select Genre'
 	          ),
-	          _react2['default'].createElement(_SelectGenre2['default'], null)
+	          _react2['default'].createElement(_SelectGenre2['default'], { selectedGenres: this.props.selectedGenres })
 	        )
 	      );
 	    }
@@ -28183,25 +28205,29 @@
 /* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
+	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _objectAssign = __webpack_require__(246);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
 	var SelectGenre = (function (_React$Component) {
 	  _inherits(SelectGenre, _React$Component);
@@ -28209,7 +28235,7 @@
 	  function SelectGenre(props) {
 	    _classCallCheck(this, SelectGenre);
 
-	    _get(Object.getPrototypeOf(SelectGenre.prototype), "constructor", this).call(this, props);
+	    _get(Object.getPrototypeOf(SelectGenre.prototype), 'constructor', this).call(this, props);
 	    this.state = {
 	      HipHop: false,
 	      Rap: false,
@@ -28221,152 +28247,215 @@
 	      Pop: false,
 	      Dance: false
 	    };
+
+	    this.genreHandler = this.genreHandler.bind(this);
 	  }
 
 	  _createClass(SelectGenre, [{
-	    key: "genreHandler",
-	    value: function genreHandler(event) {
+	    key: 'genreHandler',
+	    value: function genreHandler() {
 	      var nextState = this.state;
 	      var genre = event.target.value;
 	      nextState[genre] = !nextState[genre];
 	      this.setState(nextState);
 	    }
 	  }, {
-	    key: "render",
+	    key: '_onSubmit',
+	    value: function _onSubmit() {
+	      var state = (0, _objectAssign2['default'])({}, this.state);
+	      this.props.selectedGenres(state);
+	    }
+	  }, {
+	    key: 'render',
 	    value: function render() {
-	      var blah = _react2["default"].createElement(
-	        "div",
-	        null,
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	      var blah = _react2['default'].createElement(
+	        'form',
+	        { className: 'Form', onSubmit: this._onSubmit.bind(this) },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "HipHop", onChange: this.genreHandler },
-	              " HipHop"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'HipHop', onChange: this.genreHandler },
+	              ' HipHop'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Rap", onChange: this.genreHandler },
-	              " Rap"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Rap', onChange: this.genreHandler },
+	              ' Rap'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "RnB", onChange: this.genreHandler },
-	              " R&B"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'RnB', onChange: this.genreHandler },
+	              ' R&B'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Alternative", onChange: this.genreHandler },
-	              " Alternative"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Alternative', onChange: this.genreHandler },
+	              ' Alternative'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Electronic", onChange: this.genreHandler },
-	              " Electronic"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Electronic', onChange: this.genreHandler },
+	              ' Electronic'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Country", onChange: this.genreHandler },
-	              " Country"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Country', onChange: this.genreHandler },
+	              ' Country'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Rock", onChange: this.genreHandler },
-	              " Rock"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Rock', onChange: this.genreHandler },
+	              ' Rock'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Pop", onChange: this.genreHandler },
-	              " Pop"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Pop', onChange: this.genreHandler },
+	              ' Pop'
 	            )
 	          )
 	        ),
-	        _react2["default"].createElement(
-	          "div",
-	          { className: "checkbox" },
-	          _react2["default"].createElement(
-	            "label",
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'checkbox' },
+	          _react2['default'].createElement(
+	            'label',
 	            null,
-	            _react2["default"].createElement(
-	              "input",
-	              { type: "checkbox", value: "Dance", onChange: this.genreHandler },
-	              " Dance"
+	            _react2['default'].createElement(
+	              'input',
+	              { type: 'checkbox', value: 'Dance', onChange: this.genreHandler },
+	              ' Dance'
 	            )
+	          )
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { classNames: 'submit-buttons' },
+	          _react2['default'].createElement(
+	            'button',
+	            { type: 'submit', className: 'primary' },
+	            'Update Results'
 	          )
 	        )
 	      );
+
 	      return blah;
 	    }
 	  }]);
 
 	  return SelectGenre;
-	})(_react2["default"].Component);
+	})(_react2['default'].Component);
 
-	exports["default"] = SelectGenre;
-	module.exports = exports["default"];
+	exports['default'] = SelectGenre;
+	module.exports = exports['default'];
 
 /***/ },
 /* 246 */
+/***/ function(module, exports) {
+
+	/* eslint-disable no-unused-vars */
+	'use strict';
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+	function toObject(val) {
+		if (val === null || val === undefined) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var to = toObject(target);
+		var symbols;
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = Object(arguments[s]);
+
+			for (var key in from) {
+				if (hasOwnProperty.call(from, key)) {
+					to[key] = from[key];
+				}
+			}
+
+			if (Object.getOwnPropertySymbols) {
+				symbols = Object.getOwnPropertySymbols(from);
+				for (var i = 0; i < symbols.length; i++) {
+					if (propIsEnumerable.call(from, symbols[i])) {
+						to[symbols[i]] = from[symbols[i]];
+					}
+				}
+			}
+		}
+
+		return to;
+	};
+
+
+/***/ },
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28389,7 +28478,7 @@
 
 	var _dispatchersDispatcher2 = _interopRequireDefault(_dispatchersDispatcher);
 
-	var _CoreStore = __webpack_require__(247);
+	var _CoreStore = __webpack_require__(248);
 
 	var _CoreStore2 = _interopRequireDefault(_CoreStore);
 
@@ -28449,7 +28538,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28466,7 +28555,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _events = __webpack_require__(248);
+	var _events = __webpack_require__(249);
 
 	var CHANGE_EVENT = 'change';
 
@@ -28503,7 +28592,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -28810,7 +28899,7 @@
 
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28833,11 +28922,11 @@
 
 	var _dispatchersDispatcher2 = _interopRequireDefault(_dispatchersDispatcher);
 
-	var _CoreStore = __webpack_require__(247);
+	var _CoreStore = __webpack_require__(248);
 
 	var _CoreStore2 = _interopRequireDefault(_CoreStore);
 
-	var _constantsArtistActionConstantsJs = __webpack_require__(250);
+	var _constantsArtistActionConstantsJs = __webpack_require__(251);
 
 	var _constantsArtistActionConstantsJs2 = _interopRequireDefault(_constantsArtistActionConstantsJs);
 
@@ -28893,7 +28982,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28908,7 +28997,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28923,7 +29012,7 @@
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _constantsArtistActionConstants = __webpack_require__(250);
+	var _constantsArtistActionConstants = __webpack_require__(251);
 
 	var _constantsArtistActionConstants2 = _interopRequireDefault(_constantsArtistActionConstants);
 
@@ -28939,11 +29028,13 @@
 	    var artists = [{
 	      "id": 1,
 	      "created": "2015-08-29T15:55:06+0000",
-	      "name": "Artist 1"
+	      "name": "Artist 1",
+	      "genre": "HipHop"
 	    }, {
 	      "id": 1,
 	      "created": "2015-08-29T15:55:06+0000",
-	      "name": "Artist 1"
+	      "name": "Artist 1",
+	      "genre": "Alternative"
 	    }];
 
 	    _dispatchersDispatcher2['default'].dispatch({
@@ -28975,7 +29066,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -29001,12 +29092,12 @@
 	        "id": 1,
 	        "created": "2015-08-29T15:55:06+0000",
 	        "name": "Kanye",
-	        "genres": ["HipHop, Rap"]
+	        "genres": ["HipHop", "Rap"]
 	      }, {
 	        "id": 1,
 	        "created": "2015-08-29T15:55:06+0000",
 	        "name": "Tupac",
-	        "genres": ["Rap, Alternative"]
+	        "genres": ["Rap", "Alternative"]
 	      }];
 	    }
 	    if (festival == "Coachella") {
@@ -29030,7 +29121,7 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29053,7 +29144,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactable = __webpack_require__(254);
+	var _reactable = __webpack_require__(255);
 
 	var _reactable2 = _interopRequireDefault(_reactable);
 
@@ -29076,22 +29167,28 @@
 	    }
 	  }, {
 	    key: 'createTableArray',
-	    value: function createTableArray(artists) {
+	    value: function createTableArray(artists, genres) {
 	      var array = [];
-	      for (var i = 0; i < artists.length; i++) {
+	      for (var i in artists) {
 	        var artist = artists[i];
-	        var artistObject = {
-	          'Name': artist.name,
-	          'Genres': artist.genres
-	        };
-	        array.push(artistObject);
+	        for (var j in artist.genres) {
+	          for (var k in genres) {
+	            if (artist.genres[j] == k && genres[k] == true) {
+	              var artistObject = {
+	                'Name': artist.name,
+	                'Genres': artist.genres
+	              };
+	              array.push(artistObject);
+	            }
+	          }
+	        }
 	      }
 	      return array;
 	    }
 	  }, {
 	    key: 'getTable',
 	    value: function getTable() {
-	      var array = this.createTableArray(this.props.festivalArtists);
+	      var array = this.createTableArray(this.props.festivalArtists, this.props.selectedGenres);
 	      var table = _react2['default'].createElement(Table, { className: 'table', id: 'table', data: array, filterable: ['Name', 'Genres'] });
 	      return table;
 	    }
@@ -29110,7 +29207,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -30070,6 +30167,300 @@
 	    return exports;
 	}));
 
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _storesFestivalStore = __webpack_require__(247);
+
+	var _storesFestivalStore2 = _interopRequireDefault(_storesFestivalStore);
+
+	var _storesArtistStore = __webpack_require__(250);
+
+	var _storesArtistStore2 = _interopRequireDefault(_storesArtistStore);
+
+	var _actionsFestivalActions = __webpack_require__(228);
+
+	var _actionsFestivalActions2 = _interopRequireDefault(_actionsFestivalActions);
+
+	var _actionsArtistActions = __webpack_require__(252);
+
+	var _actionsArtistActions2 = _interopRequireDefault(_actionsArtistActions);
+
+	var _actionsArtistApiCalls = __webpack_require__(253);
+
+	var _actionsArtistApiCalls2 = _interopRequireDefault(_actionsArtistApiCalls);
+
+	var _CheckboxCheckbox = __webpack_require__(257);
+
+	var _CheckboxCheckbox2 = _interopRequireDefault(_CheckboxCheckbox);
+
+	var _RankingsSelectFestival = __webpack_require__(234);
+
+	var _RankingsSelectFestival2 = _interopRequireDefault(_RankingsSelectFestival);
+
+	var _ArtistList = __webpack_require__(258);
+
+	var _ArtistList2 = _interopRequireDefault(_ArtistList);
+
+	var SelectPerformances = (function (_React$Component) {
+	  _inherits(SelectPerformances, _React$Component);
+
+	  function SelectPerformances(props) {
+	    _classCallCheck(this, SelectPerformances);
+
+	    _get(Object.getPrototypeOf(SelectPerformances.prototype), 'constructor', this).call(this, props);
+	    this.state = {
+	      festivals: _storesFestivalStore2['default'].getFestivals(),
+	      festivalArtists: _actionsArtistApiCalls2['default'].getFestivalArtists('Bonaroo')
+	    };
+
+	    this._onChange = this._onChange.bind(this);
+	  }
+
+	  _createClass(SelectPerformances, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      _storesFestivalStore2['default'].addChangeListener(this._onChange);
+	      _actionsFestivalActions2['default'].getFestivals();
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      _storesFestivalStore2['default'].removeChangeListener(this._onChange);
+	    }
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange() {
+	      this.setState({
+	        festivals: _storesFestivalStore2['default'].getFestivals()
+	      });
+	    }
+	  }, {
+	    key: '_onOptionSelected',
+	    value: function _onOptionSelected(selected, e) {
+	      var artists = _actionsArtistApiCalls2['default'].getFestivalArtists(selected.name);
+	      this.setState({ festivalArtists: artists });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'container' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2['default'].createElement(
+	            'h3',
+	            null,
+	            'What Festival Are You Attending?'
+	          ),
+	          _react2['default'].createElement(_RankingsSelectFestival2['default'], { festivals: this.state.festivals, onOptionSelected: this._onOptionSelected.bind(this) })
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2['default'].createElement(
+	            'h3',
+	            null,
+	            'What Artists Did You See?'
+	          ),
+	          _react2['default'].createElement(_ArtistList2['default'], { artists: this.state.festivalArtists })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return SelectPerformances;
+	})(_react2['default'].Component);
+
+	exports['default'] = SelectPerformances;
+
+	SelectPerformances.contextTypes = {
+	  router: _react2['default'].PropTypes.func.isRequired
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _objectAssign = __webpack_require__(246);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+	var Checkbox = (function (_React$Component) {
+	  _inherits(Checkbox, _React$Component);
+
+	  function Checkbox() {
+	    _classCallCheck(this, Checkbox);
+
+	    _get(Object.getPrototypeOf(Checkbox.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(Checkbox, [{
+	    key: 'render',
+	    value: function render() {
+
+	      return _react2['default'].createElement(
+	        'button',
+	        { onClick: this.props.checkboxHandler, value: this.props.name, type: 'button', disabled: this.props.clicked },
+	        this.props.name
+	      );
+	    }
+	  }]);
+
+	  return Checkbox;
+	})(_react2['default'].Component);
+
+	exports['default'] = Checkbox;
+
+	Checkbox.propTypes = {
+	  checkboxValue: _react2['default'].PropTypes.string.isRequired
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _CheckboxCheckbox = __webpack_require__(257);
+
+	var _CheckboxCheckbox2 = _interopRequireDefault(_CheckboxCheckbox);
+
+	var _objectAssign = __webpack_require__(246);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+	var ArtistList = (function (_React$Component) {
+	  _inherits(ArtistList, _React$Component);
+
+	  function ArtistList(props) {
+	    _classCallCheck(this, ArtistList);
+
+	    _get(Object.getPrototypeOf(ArtistList.prototype), 'constructor', this).call(this, props);
+	    this.state = {
+	      selectedArtists: []
+	    };
+	  }
+
+	  _createClass(ArtistList, [{
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps() {
+	      this.setState({ selectedArtists: [] });
+	    }
+	  }, {
+	    key: 'checkboxHandler',
+	    value: function checkboxHandler(e) {
+	      var artist = e.target.value;
+	      var selected = this.state.selectedArtists;
+	      if (selected.length == 0) {
+	        selected.push(artist);
+	        this.setState({ selectedArtists: selected });
+	        return;
+	      }
+	      for (var a in selected) {
+	        if (selected[a] == artist) {
+	          if (a == 0) {
+	            selected.splice(a, 1);
+	          } else {
+	            selected.splice(a);
+	          }
+	          this.setState({ selectedArtists: selected });
+	          return;
+	        }
+	        selected.push(artist);
+	      }
+	      this.setState({ selectedArtists: selected });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this = this;
+
+	      var checkboxes = this.props.artists.map(function (artist, index) {
+	        return _react2['default'].createElement(
+	          'div',
+	          null,
+	          _react2['default'].createElement(_CheckboxCheckbox2['default'], { checkboxHandler: _this.checkboxHandler.bind(_this), name: artist.name })
+	        );
+	      });
+
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        checkboxes
+	      );
+	    }
+	  }]);
+
+	  return ArtistList;
+	})(_react2['default'].Component);
+
+	exports['default'] = ArtistList;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

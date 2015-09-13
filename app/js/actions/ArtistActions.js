@@ -11,12 +11,14 @@ export default {
       {
           "id": 1,
           "created": "2015-08-29T15:55:06+0000",
-          "name": "Artist 1"
+          "name": "Artist 1",
+          "genre": "HipHop"
       },
       {
           "id": 1,
           "created": "2015-08-29T15:55:06+0000",
-          "name": "Artist 1"
+          "name": "Artist 1",
+          "genre": "Alternative"
       }
     ]
 

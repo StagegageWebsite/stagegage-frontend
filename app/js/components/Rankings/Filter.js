@@ -6,6 +6,7 @@ import SelectGenre from './SelectGenre'
 class Filter extends React.Component{
 
   render() {
+
     return (
       <div className="container">
         <div className="row">
@@ -14,7 +15,7 @@ class Filter extends React.Component{
         </div>
         <div className="row">
           <h3>Select Genre</h3>
-          <SelectGenre />
+          <SelectGenre selectedGenres={this.props.selectedGenres}/>
         </div>
       </div>
     )

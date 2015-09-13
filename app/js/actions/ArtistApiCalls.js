@@ -13,13 +13,13 @@ export default {
               "id": 1,
               "created": "2015-08-29T15:55:06+0000",
               "name": "Kanye",
-              "genres": ["HipHop, Rap"]
+              "genres": ["HipHop", "Rap"]
           },
           {
               "id": 1,
               "created": "2015-08-29T15:55:06+0000",
               "name": "Tupac",
-              "genres": ["Rap, Alternative"]
+              "genres": ["Rap", "Alternative"]
           }
         ]
     }
