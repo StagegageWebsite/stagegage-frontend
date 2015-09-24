@@ -53,6 +53,10 @@ export default class SelectPerformances extends React.Component {
           <h3>What Artists Did You See?</h3>
           <ArtistList artists={this.state.festivalArtists} />
         </div>
+        <div className="row">
+          <h3>Now Rank Em</h3>
+          <a href="file:///Users/Pooja/Projects/stagegage-frontend/public/index.html#/RankPerformances">>>>></a>
+        </div>
       </div>
     )
   }
